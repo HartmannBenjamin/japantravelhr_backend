@@ -34,7 +34,7 @@ class AuthController extends BaseController
             'c_password' => 'required|same:password',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()){
             return $this->sendError('Wrong data provided', $validator->messages(), 422);
         }
 

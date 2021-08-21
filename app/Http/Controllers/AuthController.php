@@ -35,21 +35,22 @@ class AuthController extends BaseController
         ]);
 
         if ($validator->fails()){
-            return $this->sendError('Wrong data provided', $validator->messages(), 422);
+            return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
         }
 
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
 
         $user = User::create($input);
-        $user->role()->associate(Role::findOrFail($input['role_id']));
+        $roleId = $input['role_id'] == null ? 1 : $input['role_id'];
+        $user->role()->associate(Role::findOrFail($roleId));
 
         $data = [
             'token' => auth()->login($user),
             'user' => $user,
         ];
 
-        return $this->sendResponse($data, 'User registered successfully');
+        return $this->sendResponse($data, __('auth.user_created'));
     }
 
     /**
@@ -68,14 +69,14 @@ class AuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Wrong data provided', $validator->messages(), 422);
+            return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
         }
 
         if (!$token = auth()->attempt($credentials)) {
-            return $this->sendError('Wrong credentials', [], 401);
+            return $this->sendError(__('auth.wrong_credentials'), [], 401);
         }
 
-        return $this->sendResponse(['token' => $token], 'Log in successfully');
+        return $this->sendResponse(['token' => $token], __('auth.login'));
     }
 
     /**
@@ -96,12 +97,17 @@ class AuthController extends BaseController
         $user = $request->user();
 
         return $this->sendResponse([
-            'user' => [
-                'email' => $user->email,
-                'name' => $user->name,
-                'role' => $user->role->name
-            ]
-        ]);
+                'user' => [
+                    'email' => $user->email,
+                    'name' => $user->name,
+                    'image_name' => $user->image_name,
+                    'role' => $user->role,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                ]
+            ],
+        __('auth.user_info')
+        );
     }
 
     /**

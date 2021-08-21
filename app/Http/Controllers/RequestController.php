@@ -37,7 +37,7 @@ class RequestController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
-        return $this->sendResponse($this->requestService->getAll($request->user()), 'Requests retrieved successfully');
+        return $this->sendResponse($this->requestService->getAll($request->user()), __('request.retrieved'));
     }
 
     /**
@@ -54,10 +54,10 @@ class RequestController extends BaseController
         $user = $request->user();
 
         if ($user->isUser() && $user->id != $requestEntity->user_id) {
-            return $this->sendError('You don\'t have access to this request', [], 403);
+            return $this->sendError(__('request.no_access'), [], 403);
         }
 
-        return $this->sendResponse(new RequestResource($requestEntity), 'Request retrieved successfully.');
+        return $this->sendResponse(new RequestResource($requestEntity), __('request.retrieved'));
     }
 
     /**
@@ -73,21 +73,21 @@ class RequestController extends BaseController
         $input = $request->all();
 
         if (!$user->isUser()) {
-            return $this->sendError("You don't have the permission", [], 403);
+            return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
         $validator = Validator::make($input, [
-            'subject' => 'required',
-            'description' => 'required',
+            'subject' => 'required|string|min:4|max:200',
+            'description' => 'required|string|min:10|max:500',
         ]);
 
         if ($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
+            return $this->sendError(__('request.validation_error'), $validator->errors());
         }
 
         return $this->sendResponse(
             $this->requestService->create($user->id, $input['subject'], $input['description']),
-            'Request created successfully.'
+            __('request.created')
         );
     }
 
@@ -107,21 +107,21 @@ class RequestController extends BaseController
 
         if (!$user->isUser() || $requestEntity->status_id != RequestService::STATUS_OPEN
             || $user->id != $requestEntity->user_id) {
-            return $this->sendError("You don't have the permission", [], 403);
+            return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
         $validator = Validator::make($input, [
-            'subject' => 'required',
-            'description' => 'required',
+            'subject' => 'required|string|min:4|max:200',
+            'description' => 'required|string|min:10|max:500',
         ]);
 
         if ($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
+            return $this->sendError(__('request.validation_error'), $validator->errors());
         }
 
         return $this->sendResponse(
             $this->requestService->update($requestEntity, $user->id, $input['subject'], $input['description']),
-            'Request updated successfully.'
+            __('request.updated')
         );
     }
 
@@ -139,16 +139,17 @@ class RequestController extends BaseController
         $statusId = $request->get('status_id');
 
         if (!$request->user()->isHR() || $requestEntity->status_id == RequestService::STATUS_COMPLETE) {
-            return $this->sendError("You don't have the permission", [], 403);
+            return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        if ($statusId == null || !is_numeric($statusId) || $statusId == RequestService::STATUS_COMPLETE) {
-            return $this->sendError('Wrong status provided');
+        if ($statusId == null || !is_numeric($statusId) || !in_array($statusId, RequestService::ALL_STATUS)
+            || $statusId == RequestService::STATUS_COMPLETE) {
+            return $this->sendError(__('request.wrong_status'));
         }
 
         return $this->sendResponse(
             $this->requestService->updateStatus($requestEntity, $request->user()->id, $statusId),
-            'Request updated successfully.'
+            __('request.updated')
         );
     }
 
@@ -163,7 +164,7 @@ class RequestController extends BaseController
     public function updateStatusManager(int $id, Request $request): JsonResponse
     {
         if (!$request->user()->isManager()) {
-            return $this->sendError("You don't have the permission", [], 403);
+            return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
         $requestEntity = $this->requestService->updateStatus(
@@ -172,6 +173,6 @@ class RequestController extends BaseController
             RequestService::STATUS_COMPLETE
         );
 
-        return $this->sendResponse($requestEntity, 'Request updated successfully.');
+        return $this->sendResponse($requestEntity, __('request.updated'));
     }
 }

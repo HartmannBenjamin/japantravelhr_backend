@@ -180,6 +180,11 @@ return [
          * JWT ...
          */
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+
+        /*
+         * IDE Helper ...
+         */
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
 
     /*

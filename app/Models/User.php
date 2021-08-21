@@ -45,6 +45,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Request::class);
     }
 
+    public function logs(): HasMany
+    {
+        return $this->hasMany(RequestLog::class);
+    }
+
     public function save(array $options = array()): bool
     {
         if (isset($this->remember_token))

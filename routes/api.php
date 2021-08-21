@@ -1,25 +1,26 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RequestController;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
 /*
     Auth routes
 */
-
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 Route::get('me', [AuthController::class, 'me']);
+Route::post('refreshToken', [AuthController::class, 'refreshToken']);
 
+/*
+    Request routes
+ */
+Route::prefix('request')->middleware('jwt.verify')->group(function () {
+    Route::get('all', [RequestController::class, 'index']);
+    Route::get('get/{id}', [RequestController::class, 'show'])->where('id', '[0-9]+');
+    Route::post('create', [RequestController::class, 'store']);
+    Route::put('edit/{id}', [RequestController::class, 'update'])->where('id', '[0-9]+');
+    Route::put('changeStatus/{id}', [RequestController::class, 'updateStatusHR'])->where('id', '[0-9]+');
+    Route::put('complete/{id}', [RequestController::class, 'updateStatusManager'])->where('id', '[0-9]+');
+});

@@ -7,15 +7,23 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
+
+    /**
+     * AuthController constructor.
+     */
     public function __construct()
     {
         $this->middleware('jwt.verify')->except(['login', 'register']);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -27,24 +35,31 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->messages()], 200);
+            return $this->sendError('Wrong data provided', $validator->messages(), 422);
         }
 
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
+
         $user = User::create($input);
         $user->role()->associate(Role::findOrFail($input['role_id']));
 
-        return response()->json([
+        $data = [
             'token' => auth()->login($user),
             'user' => $user,
-            'message' => 'User registered successfully'
-        ], 200);
+        ];
+
+        return $this->sendResponse($data, 'User registered successfully');
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
     public function login(Request $request): JsonResponse
     {
-        JWTAuth::factory()->setTTL(1);
+//        JWTAuth::factory()->setTTL(1);
         $credentials = $request->only('email', 'password');
 
         $validator = Validator::make($credentials, [
@@ -53,30 +68,45 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 200);
+            return $this->sendError('Wrong data provided', $validator->messages(), 422);
         }
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(null, 401);
+            return $this->sendError('Wrong credentials', [], 401);
         }
 
-        return response()->json(['token' => $token], 200);
+        return $this->sendResponse(['token' => $token], 'Log in successfully');
     }
 
+    /**
+     * @return JsonResponse
+     */
+    public function refreshToken(): JsonResponse
+    {
+        return $this->sendResponse();
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
     public function me(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        return response()->json([
-            'success' => true,
+        return $this->sendResponse([
             'user' => [
                 'email' => $user->email,
                 'name' => $user->name,
                 'role' => $user->role->name
             ]
-        ], 200);
+        ]);
     }
 
+    /**
+     * Log out function
+     */
     public function logout()
     {
         auth()->logout();

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Exception;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
@@ -14,16 +15,17 @@ class JwtMiddleware extends BaseMiddleware
 {
 
     /**
-     * Handle an incoming request.
+     * JWT Middleware.
      *
      * @param Request $request
      * @param Closure $next
      * @return mixed
+     * @throws JWTException
      */
     public function handle(Request $request, Closure $next)
     {
         try {
-            $user = JWTAuth::parseToken()->authenticate();
+            JWTAuth::parseToken()->authenticate();
         } catch (Exception $e) {
             if ($e instanceof TokenInvalidException) {
                 return response()->json([
@@ -35,7 +37,7 @@ class JwtMiddleware extends BaseMiddleware
                     'success' => 'token_expired',
                     'message' => 'Token is expired',
                     'refreshToken' => JWTAuth::parseToken()->refresh(),
-                ], 200);
+                ]);
             }else{
                 return response()->json([
                     'success' => false,

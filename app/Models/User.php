@@ -41,10 +41,20 @@ class User extends Authenticatable implements JWTSubject
 
     public function save(array $options = array()): bool
     {
-        if(isset($this->remember_token))
+        if (isset($this->remember_token))
             unset($this->remember_token);
 
         return parent::save($options);
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role_id === 1;
+    }
+
+    public function isManager(): bool
+    {
+        return $this->role_id === 3;
     }
 
     public function getJWTIdentifier()

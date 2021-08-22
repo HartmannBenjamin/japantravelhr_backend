@@ -19,8 +19,8 @@ class JwtMiddleware extends BaseMiddleware
      *
      * @param Request $request
      * @param Closure $next
+     *
      * @return mixed
-     * @throws JWTException
      */
     public function handle(Request $request, Closure $next)
     {
@@ -36,8 +36,7 @@ class JwtMiddleware extends BaseMiddleware
                 return response()->json([
                     'success' => 'token_expired',
                     'message' => 'Token is expired',
-                    'refreshToken' => JWTAuth::parseToken()->refresh(),
-                ]);
+                ], 401);
             }else{
                 return response()->json([
                     'success' => false,

@@ -76,10 +76,7 @@ class RequestController extends BaseController
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        $validator = Validator::make($input, [
-            'subject' => 'required|string|min:4|max:200',
-            'description' => 'required|string|min:10|max:500',
-        ]);
+        $validator = Validator::make($input, RequestEntity::$rules);
 
         if ($validator->fails()){
             return $this->sendError(__('request.validation_error'), $validator->errors());
@@ -87,7 +84,8 @@ class RequestController extends BaseController
 
         return $this->sendResponse(
             $this->requestService->create($user->id, $input['subject'], $input['description']),
-            __('request.created')
+            __('request.created'),
+            201
         );
     }
 
@@ -110,10 +108,7 @@ class RequestController extends BaseController
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        $validator = Validator::make($input, [
-            'subject' => 'required|string|min:4|max:200',
-            'description' => 'required|string|min:10|max:500',
-        ]);
+        $validator = Validator::make($input, RequestEntity::$rules);
 
         if ($validator->fails()){
             return $this->sendError(__('request.validation_error'), $validator->errors());

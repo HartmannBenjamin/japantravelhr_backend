@@ -10,11 +10,13 @@ class BaseController extends Controller
     /**
      * success response method.
      *
-     * @param $result
-     * @param $message
+     * @param array $result
+     * @param string $message
+     * @param int $code
+     *
      * @return JsonResponse
      */
-    public function sendResponse($result = [], $message = ''): JsonResponse
+    public function sendResponse($result = [], $message = '' , $code = 200): JsonResponse
     {
         $response = [
             'success' => true,
@@ -22,8 +24,19 @@ class BaseController extends Controller
             'message' => $message,
         ];
 
+        return response()->json($response, $code);
+    }
 
-        return response()->json($response);
+    /**
+     * success token response method.
+     *
+     * @param string $token
+     *
+     * @return JsonResponse
+     */
+    public function sendTokenResponse(string $token): JsonResponse
+    {
+        return response()->json(['success' => 'true', 'token' => $token])->header('Authorization', $token);
     }
 
     /**
@@ -32,6 +45,7 @@ class BaseController extends Controller
      * @param $error
      * @param array $errorMessages
      * @param int $code
+     *
      * @return JsonResponse
      */
     public function sendError($error, $errorMessages = [], $code = 404): JsonResponse

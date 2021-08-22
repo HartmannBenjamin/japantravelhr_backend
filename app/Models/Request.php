@@ -24,6 +24,11 @@ class Request extends Model
         'status_id'
     ];
 
+    public static $rules = [
+        'subject' => 'required|string|min:4|max:200',
+        'description' => 'required|string|min:10|max:500',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -7,6 +7,10 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\User as UserResource;
+use App\Http\Resources\Role as RoleResource;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends BaseController
 {
@@ -16,7 +20,7 @@ class AuthController extends BaseController
      */
     public function __construct()
     {
-        $this->middleware('jwt.verify')->except(['login', 'register']);
+        $this->middleware('jwt.verify')->except(['login', 'register', 'emailAvailable', 'getRoles']);
     }
 
     /**
@@ -26,11 +30,13 @@ class AuthController extends BaseController
      */
     public function register(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
+        $input = $request->all();
+
+        $validator = Validator::make($input, [
             'name' => 'required',
             'email' => 'required|email',
-            'image_name' => 'required',
             'password' => 'required',
+            'role_id' => 'required',
             'c_password' => 'required|same:password',
         ]);
 
@@ -38,19 +44,14 @@ class AuthController extends BaseController
             return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
         }
 
-        $input = $request->all();
         $input['password'] = bcrypt($input['password']);
-
         $user = User::create($input);
-        $roleId = $input['role_id'] == null ? 1 : $input['role_id'];
-        $user->role()->associate(Role::findOrFail($roleId));
 
-        $data = [
-            'token' => auth()->login($user),
-            'user' => $user,
-        ];
-
-        return $this->sendResponse($data, __('auth.user_created'));
+        return $this->sendResponse(
+            ['token' => auth()->login($user), 'user' => new UserResource($user)],
+            __('auth.user_created'),
+            201
+        );
     }
 
     /**
@@ -60,7 +61,7 @@ class AuthController extends BaseController
      */
     public function login(Request $request): JsonResponse
     {
-//        JWTAuth::factory()->setTTL(1);
+        JWTAuth::factory()->setTTL(1);
         $credentials = $request->only('email', 'password');
 
         $validator = Validator::make($credentials, [
@@ -76,15 +77,21 @@ class AuthController extends BaseController
             return $this->sendError(__('auth.wrong_credentials'), [], 401);
         }
 
-        return $this->sendResponse(['token' => $token], __('auth.login'));
+        return $this->sendTokenResponse($token);
     }
 
     /**
      * @return JsonResponse
+     *
+     * @throws JWTException
      */
     public function refreshToken(): JsonResponse
     {
-        return $this->sendResponse();
+        if ($token = JWTAuth::parseToken()->refresh()) {
+            return $this->sendTokenResponse($token);
+        }
+
+        return $this->sendError(__('auth.refresh_token_error'));
     }
 
     /**
@@ -96,18 +103,7 @@ class AuthController extends BaseController
     {
         $user = $request->user();
 
-        return $this->sendResponse([
-                'user' => [
-                    'email' => $user->email,
-                    'name' => $user->name,
-                    'image_name' => $user->image_name,
-                    'role' => $user->role,
-                    'created_at' => $user->created_at,
-                    'updated_at' => $user->updated_at,
-                ]
-            ],
-        __('auth.user_info')
-        );
+        return $this->sendResponse(new UserResource($user), __('auth.user_info'));
     }
 
     /**
@@ -116,5 +112,30 @@ class AuthController extends BaseController
     public function logout()
     {
         auth()->logout();
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function emailAvailable(Request $request): JsonResponse
+    {
+        $isAvailable = true;
+        $email = $request->get('email');
+
+        if (User::where('email', '=', $email)->exists()) {
+            $isAvailable = false;
+        }
+
+        return $this->sendResponse($isAvailable);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function getRoles(): JsonResponse
+    {
+        return $this->sendResponse(RoleResource::collection(Role::all()));
     }
 }

@@ -32,7 +32,7 @@ class Request extends JsonResource
             'subject' => $this->subject,
             'description' => $this->description,
             'status' => $this->status,
-            'created_by' => $this->user,
+            'created_by' => new User($this->user),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'logs' => $logsData

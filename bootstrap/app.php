@@ -52,4 +52,7 @@ $app->singleton(
 |
 */
 
+header('Access-Control-Allow-Headers: Authorization');
+header('Access-Control-Expose-Headers: Authorization');
+
 return $app;

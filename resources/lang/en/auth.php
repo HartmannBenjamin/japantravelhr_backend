@@ -6,4 +6,5 @@ return [
     'login' => 'Log in successfully.',
     'wrong_credentials' => 'Wrong credentials.',
     'user_info' => 'User information provided.',
+    'refresh_token_error' => 'Error token refresh.',
 ];

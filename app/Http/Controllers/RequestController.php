@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RequestStatus;
 use App\Services\RequestService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use App\Http\Controllers\BaseController as BaseController;
 use App\Models\Request as RequestEntity;
 use Validator;
 use App\Http\Resources\Request as RequestResource;
+use App\Http\Resources\Status as RequestStatusResource;
 
 /**
  * Class RequestController
@@ -169,5 +171,13 @@ class RequestController extends BaseController
         );
 
         return $this->sendResponse($requestEntity, __('request.updated'));
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function getStatus(): JsonResponse
+    {
+        return $this->sendResponse(RequestStatusResource::collection(RequestStatus::all()));
     }
 }

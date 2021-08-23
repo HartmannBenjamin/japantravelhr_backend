@@ -21,6 +21,7 @@ class RequestStatus extends Model
     protected $fillable = [
         'name',
         'code_color',
+        'description'
     ];
 
     public function requests(): HasMany

@@ -24,8 +24,12 @@ class Request extends JsonResource
         $logsData = [];
 
         foreach ($this->logs as $log) {
-            $logsData[] = array_merge($log->toArray(), ['user' => $log->user]);
+            $logsData[] = array_merge($log->toArray(), ['user' => new User($log->user)]);
         }
+
+        usort($logsData, function ($a, $b) {
+            return strtotime($b['created_at']) - strtotime($a['created_at']);
+        });
 
         return [
             'id' => $this->id,

@@ -17,13 +17,29 @@ class CreateRequestStatusTable extends Migration
         Schema::create('requests_status', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('color_code')->default("#FCFCFC");
+            $table->string('description');
+            $table->string('color_code')->default("#E7E7E7");
         });
 
-        DB::table('requests_status')->insert(['name' => 'open']);
-        DB::table('requests_status')->insert(['name' => 'processed', 'color_code' => '#9FA8FF']);
-        DB::table('requests_status')->insert(['name' => 'hr_reviewed', 'color_code' => '#A1F1FF']);
-        DB::table('requests_status')->insert(['name' => 'complete', 'color_code' => '#85F37C']);
+        DB::table('requests_status')->insert([
+            'name' => 'Open',
+            'description' => 'The request is waiting for an HR staff to review it.'
+        ]);
+        DB::table('requests_status')->insert([
+            'name' => 'Processed',
+            'description' => 'The request is in process.',
+            'color_code' => '#9FA8FF'
+        ]);
+        DB::table('requests_status')->insert([
+            'name' => 'Hr Reviewed',
+            'description' => 'The request has been reviewed by HR staff.',
+            'color_code' => '#A1F1FF'
+        ]);
+        DB::table('requests_status')->insert([
+            'name' => 'Complete',
+            'description' => 'The request has been completed by a Manager.',
+            'color_code' => '#85F37C'
+        ]);
     }
 
     /**

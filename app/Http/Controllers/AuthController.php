@@ -45,7 +45,10 @@ class AuthController extends BaseController
         }
 
         $input['password'] = bcrypt($input['password']);
+
         $user = User::create($input);
+        $user->role_id = $input['role_id'];
+        $user->save();
 
         return $this->sendResponse(
             ['token' => auth()->login($user), 'user' => new UserResource($user)],

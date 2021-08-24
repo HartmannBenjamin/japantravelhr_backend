@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use \App\Http\Resources\User as UserResource;
+use Illuminate\Support\Facades\File;
 
 class UploadImageController extends BaseController
 {
@@ -23,6 +24,11 @@ class UploadImageController extends BaseController
             $file->move(public_path('images'), $imageName);
 
             $user = User::where('email', $request->get('userEmail'))->first();
+
+            if ($user->image_name && $user->image_name != 'test.png') {
+                File::delete('images/' . $user->image_name);
+            }
+
             $user->image_name = $imageName;
             $user->save();
 

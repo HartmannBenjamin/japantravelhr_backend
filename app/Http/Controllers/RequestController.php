@@ -189,6 +189,10 @@ class RequestController extends BaseController
      */
     public function generatePDF(Request $request): string
     {
+        if ($request->user()->isUser()) {
+            return $this->sendError(__('request.wrong_permission'), [], 403);
+        }
+
         $pdf = PDF::loadView('request_pdf', ['requests' => $this->requestService->getAll($request->user())]);
         return $pdf->output();
     }

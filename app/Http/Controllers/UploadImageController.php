@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use \App\Http\Resources\User as UserResource;
 
 class UploadImageController extends BaseController
 {
@@ -25,7 +26,7 @@ class UploadImageController extends BaseController
             $user->image_name = $imageName;
             $user->save();
 
-            return $this->sendResponse($user, 'Image uploaded.');
+            return $this->sendResponse(['user' => new UserResource($user)], 'Image uploaded.');
         }
 
         return $this->sendError('No image provided.');

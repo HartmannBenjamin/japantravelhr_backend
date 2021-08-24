@@ -15,6 +15,7 @@ Route::get('me', [AuthController::class, 'me']);
 Route::get('refreshToken', [AuthController::class, 'refreshToken']);
 Route::post('emailAvailable', [AuthController::class, 'emailAvailable']);
 Route::get('roles', [AuthController::class, 'getRoles']);
+Route::put('update', [AuthController::class, 'update']);
 
 /*
     Upload Image

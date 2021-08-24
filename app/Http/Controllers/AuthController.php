@@ -138,4 +138,40 @@ class AuthController extends BaseController
     {
         return $this->sendResponse(RoleResource::collection(Role::all()));
     }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function update(Request $request): JsonResponse
+    {
+        $user = User::findOrFail(auth()->user()->id);
+        $input = $request->all();
+
+        if ($input['name'] == null || $input['name'] == '') {
+            return $this->sendError('');
+        }
+
+        if ($input['password']) {
+            $validator = Validator::make($input, [
+                'password' => 'required',
+                'c_password' => 'required|same:password',
+            ]);
+
+            if ($validator->fails()){
+                return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
+            }
+
+            $user->password = bcrypt($input['password']);
+        }
+
+        $user->name = $input['name'];
+        $user->save();
+
+        return $this->sendResponse(
+            ['user' => new UserResource($user)],
+            __('auth.user_updated')
+        );
+    }
 }

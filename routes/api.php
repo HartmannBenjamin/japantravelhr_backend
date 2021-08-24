@@ -32,4 +32,5 @@ Route::prefix('request')->middleware('jwt.verify')->group(function () {
     Route::put('changeStatus/{id}', [RequestController::class, 'updateStatusHR'])->where('id', '[0-9]+');
     Route::put('complete/{id}', [RequestController::class, 'updateStatusManager'])->where('id', '[0-9]+');
     Route::get('status', [RequestController::class, 'getStatus']);
+    Route::get('pdf', [RequestController::class, 'generatePDF']);
 });

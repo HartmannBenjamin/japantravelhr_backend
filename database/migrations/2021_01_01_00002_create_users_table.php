@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
         });
 
         DB::table('users')->insert([
-            'name' => 'David',
+            'name' => 'David User',
             'email' => 'user@japantravel.com',
             'password' => '$2y$10$CD9AkWwgrSjz27Qe/pOxA.8/3N0e3c0RY2xowh9l8S1.PMie0N19e',
             'image_name' => 'test.png',
@@ -34,7 +34,7 @@ class CreateUsersTable extends Migration
             'created_at' => new DateTime('now'),
         ]);
         DB::table('users')->insert([
-            'name' => 'David',
+            'name' => 'Franck HR',
             'email' => 'hr@japantravel.com',
             'password' => '$2y$10$CD9AkWwgrSjz27Qe/pOxA.8/3N0e3c0RY2xowh9l8S1.PMie0N19e',
             'image_name' => 'test.png',
@@ -42,7 +42,7 @@ class CreateUsersTable extends Migration
             'created_at' => new DateTime('now'),
         ]);
         DB::table('users')->insert([
-            'name' => 'David',
+            'name' => 'John Manager',
             'email' => 'manager@japantravel.com',
             'password' => '$2y$10$CD9AkWwgrSjz27Qe/pOxA.8/3N0e3c0RY2xowh9l8S1.PMie0N19e',
             'image_name' => 'test.png',

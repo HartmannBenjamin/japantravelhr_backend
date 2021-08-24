@@ -33,10 +33,11 @@ class CreateRequestsTable extends Migration
 
         DB::table('requests')->insert([
             'subject' => 'Problem',
-            'description' => 'This is problem description',
+            'description' => 'This is problem description.',
             'user_id' => 1,
-            'status_id' => 2,
+            'status_id' => 1,
             'created_at' => new DateTime('now'),
+            'updated_at' => new DateTime('now'),
         ]);
     }
 

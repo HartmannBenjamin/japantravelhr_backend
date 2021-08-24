@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
 use App\Models\Request as RequestEntity;
+use PDF;
 use Validator;
 use App\Http\Resources\Request as RequestResource;
 use App\Http\Resources\Status as RequestStatusResource;
@@ -179,5 +180,16 @@ class RequestController extends BaseController
     public function getStatus(): JsonResponse
     {
         return $this->sendResponse(RequestStatusResource::collection(RequestStatus::all()));
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return string
+     */
+    public function generatePDF(Request $request): string
+    {
+        $pdf = PDF::loadView('request_pdf', ['requests' => $this->requestService->getAll($request->user())]);
+        return $pdf->output();
     }
 }

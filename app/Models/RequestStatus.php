@@ -20,7 +20,7 @@ class RequestStatus extends Model
      */
     protected $fillable = [
         'name',
-        'code_color',
+        'color_code',
         'description'
     ];
 

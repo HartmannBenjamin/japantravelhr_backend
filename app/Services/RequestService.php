@@ -31,7 +31,8 @@ class RequestService
         if ($user->isUser()) {
             $requestEntities = RequestEntity::where('user_id', $user->id)->get();
         } else if ($user->isManager()) {
-            $requestEntities = RequestEntity::where('status_id', self::STATUS_HR_REVIEWED)->get();
+            $requestEntities = RequestEntity::where('status_id', '=', self::STATUS_HR_REVIEWED)
+                ->orWhere('status_id', '=', self::STATUS_COMPLETE)->get();
         } else {
             $requestEntities = RequestEntity::all();
         }

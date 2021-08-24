@@ -156,7 +156,7 @@ class AuthController extends BaseController
             return $this->sendError('');
         }
 
-        if ($input['password']) {
+        if (isset($input['password'])) {
             $validator = Validator::make($input, [
                 'password' => 'required',
                 'c_password' => 'required|same:password',

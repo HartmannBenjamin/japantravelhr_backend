@@ -51,8 +51,9 @@ $app->singleton(
 | from the actual running of the application and sending responses.
 |
 */
-
-header('Access-Control-Allow-Headers: Authorization');
-header('Access-Control-Expose-Headers: Authorization');
+if (! defined('PHPUNIT_COMPOSER_INSTALL') && ! defined('__PHPUNIT_PHAR__')) {
+    header('Access-Control-Allow-Headers: Authorization');
+    header('Access-Control-Expose-Headers: Authorization');
+}
 
 return $app;

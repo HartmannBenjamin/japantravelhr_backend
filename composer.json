@@ -55,6 +55,9 @@
             "@php artisan db:drop",
             "@php artisan db:create",
             "@php artisan migrate"
+        ],
+        "phpunit": [
+            "./vendor/bin/phpunit"
         ]
     },
     "extra": {

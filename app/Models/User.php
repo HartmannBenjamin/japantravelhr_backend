@@ -60,17 +60,17 @@ class User extends Authenticatable implements JWTSubject
 
     public function isUser(): bool
     {
-        return $this->role_id === 1;
+        return $this->role_id == 1;
     }
 
     public function isHR(): bool
     {
-        return $this->role_id === 2;
+        return $this->role_id == 2;
     }
 
     public function isManager(): bool
     {
-        return $this->role_id === 3;
+        return $this->role_id == 3;
     }
 
     public function getJWTIdentifier()

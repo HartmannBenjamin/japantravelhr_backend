@@ -35,3 +35,14 @@ Route::prefix('request')->middleware('jwt.verify')->group(function () {
     Route::get('status', [RequestController::class, 'getStatus']);
     Route::get('pdf', [RequestController::class, 'generatePDF']);
 });
+
+/*
+    Get project subject file
+*/
+Route::get('projectFile', function () {
+    return response()->download(
+         storage_path("pdf/project.pdf"),
+        'project.pdf',
+        ['Content-Type' => 'application/pdf',]
+    );
+});

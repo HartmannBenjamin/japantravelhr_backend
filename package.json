@@ -11,8 +11,14 @@
     },
     "devDependencies": {
         "axios": "^0.21",
+        "husky": "^4.3.8",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14"
+    },
+    "husky": {
+        "hooks": {
+            "pre-push": "'php artisan test'"
+        }
     }
 }

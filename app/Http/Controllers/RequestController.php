@@ -161,17 +161,19 @@ class RequestController extends BaseController
      */
     public function updateStatusManager(int $id, Request $request): JsonResponse
     {
-        if (!$request->user()->isManager()) {
+        $requestEntity = RequestEntity::findOrFail($id);
+
+        if ($requestEntity->status_id !== RequestService::STATUS_HR_REVIEWED || !$request->user()->isManager()) {
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        $requestEntity = $this->requestService->updateStatus(
-            RequestEntity::findOrFail($id),
+        $requestEntityUpdated = $this->requestService->updateStatus(
+            $requestEntity,
             $request->user()->id,
             RequestService::STATUS_COMPLETE
         );
 
-        return $this->sendResponse($requestEntity, __('request.updated'));
+        return $this->sendResponse($requestEntityUpdated, __('request.updated'));
     }
 
     /**
@@ -185,9 +187,9 @@ class RequestController extends BaseController
     /**
      * @param Request $request
      *
-     * @return string
+     * @return JsonResponse|string
      */
-    public function generatePDF(Request $request): string
+    public function generatePDF(Request $request)
     {
         if ($request->user()->isUser()) {
             return $this->sendError(__('request.wrong_permission'), [], 403);

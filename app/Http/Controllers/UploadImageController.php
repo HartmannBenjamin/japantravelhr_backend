@@ -34,8 +34,7 @@ class UploadImageController extends BaseController
             'file'  => 'required|image|mimes:jpg,png|max:2048'
         ]);
 
-        return $this->sendResponse(
-            ['user' => $this->userService->uploadUserImage($request->file('file'), $request->user())],
+        return $this->sendResponse($this->userService->uploadUserImage($request->file('file'), $request->user()),
             __('other.image_upload')
         );
     }

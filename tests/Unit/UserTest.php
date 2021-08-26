@@ -1,9 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\File;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 use Throwable;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -91,6 +93,8 @@ class UserTest extends TestCase
         $this->assertTrue($user->isHR());
         $user->role_id = self::ROLE_MANAGER;
         $this->assertTrue($user->isManager());
+
+        $this->get('api/roles')->assertStatus(200);
     }
 
     /**
@@ -198,5 +202,28 @@ class UserTest extends TestCase
     public function user_logout()
     {
         $this->post('api/logout', [], ['authorization' => "bearer $this->token"])->assertStatus(200);
+    }
+
+    /** @test */
+    public function upload_user_image()
+    {
+        $image = UploadedFile::fake()->image('avatar.jpg');
+
+        $imageUrl = json_decode($this->post(
+            'api/uploadImage',
+            ['file' => $image],
+            ['authorization' => "bearer $this->token"]
+        )->assertStatus(200)->getContent(), true)['data']['image_url'];
+
+        $this->assertStringContainsString('avatar.jpg', $imageUrl);
+        $this->user->refresh();
+        $this->assertEquals(url('/images/' . $this->user->image_name), $imageUrl);
+        File::delete('images/' . $this->user->image_name);
+    }
+
+    /** @test */
+    public function project_pdf()
+    {
+        $this->get('api/projectFile')->assertStatus(200);
     }
 }

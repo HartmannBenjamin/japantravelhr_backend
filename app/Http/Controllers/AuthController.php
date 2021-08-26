@@ -44,6 +44,10 @@ class AuthController extends BaseController
             return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
         }
 
+        if (User::where('email', '=', $input['email'])->exists()) {
+            return $this->sendError(__('auth.email_exists'));
+        }
+
         $input['password'] = bcrypt($input['password']);
 
         $user = User::create($input);
@@ -64,12 +68,12 @@ class AuthController extends BaseController
      */
     public function login(Request $request): JsonResponse
     {
-        JWTAuth::factory()->setTTL(1);
+//        JWTAuth::factory()->setTTL(1);
         $credentials = $request->only('email', 'password');
 
         $validator = Validator::make($credentials, [
             'email' => 'required|email',
-            'password' => 'required|string|min:4|max:30'
+            'password' => 'required|string|min:4|max:50'
         ]);
 
         if ($validator->fails()) {
@@ -131,7 +135,10 @@ class AuthController extends BaseController
             $isAvailable = false;
         }
 
-        return $this->sendResponse($isAvailable);
+        return $this->sendResponse(
+            $isAvailable,
+            $isAvailable ? __('auth.email_available') : __('auth.email_not_available')
+        );
     }
 
     /**
@@ -139,7 +146,7 @@ class AuthController extends BaseController
      */
     public function getRoles(): JsonResponse
     {
-        return $this->sendResponse(RoleResource::collection(Role::all()));
+        return $this->sendResponse(RoleResource::collection(Role::all()), __('auth.roles'));
     }
 
     /**
@@ -149,11 +156,11 @@ class AuthController extends BaseController
      */
     public function update(Request $request): JsonResponse
     {
-        $user = User::findOrFail(auth()->user()->id);
+        $user = auth()->user();
         $input = $request->all();
 
         if ($input['name'] == null || $input['name'] == '') {
-            return $this->sendError('');
+            return $this->sendError(__('auth.no_name_provided'));
         }
 
         if (isset($input['password'])) {
@@ -172,8 +179,7 @@ class AuthController extends BaseController
         $user->name = $input['name'];
         $user->save();
 
-        return $this->sendResponse(
-            ['user' => new UserResource($user)],
+        return $this->sendResponse(new UserResource($user),
             __('auth.user_updated')
         );
     }

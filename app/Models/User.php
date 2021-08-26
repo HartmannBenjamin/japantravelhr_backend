@@ -32,7 +32,6 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     public function role(): BelongsTo
@@ -48,14 +47,6 @@ class User extends Authenticatable implements JWTSubject
     public function logs(): HasMany
     {
         return $this->hasMany(RequestLog::class);
-    }
-
-    public function save(array $options = array()): bool
-    {
-        if (isset($this->remember_token))
-            unset($this->remember_token);
-
-        return parent::save($options);
     }
 
     public function isUser(): bool

@@ -2,39 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use \App\Http\Resources\User as UserResource;
-use Illuminate\Support\Facades\File;
+use Illuminate\Validation\ValidationException;
 
 class UploadImageController extends BaseController
 {
+    protected $userService;
+
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws ValidationException
      */
     public function uploadImage(Request $request): JsonResponse
     {
-        $file = $request->file;
+        $this->validate($request, [
+            'file'  => 'required|image|mimes:jpg,png|max:2048'
+        ]);
 
-        if ($file) {
-            $imageName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images'), $imageName);
-
-            $user = User::where('email', $request->get('userEmail'))->first();
-
-            if ($user->image_name && $user->image_name != 'test.png') {
-                File::delete('images/' . $user->image_name);
-            }
-
-            $user->image_name = $imageName;
-            $user->save();
-
-            return $this->sendResponse(['user' => new UserResource($user)], 'Image uploaded.');
-        }
-
-        return $this->sendError('No image provided.');
+        return $this->sendResponse(
+            ['user' => $this->userService->uploadUserImage($request->file('file'), $request->user())],
+            __('other.image_upload')
+        );
     }
 }

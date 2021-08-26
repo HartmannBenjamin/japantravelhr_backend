@@ -179,7 +179,7 @@ class RequestController extends BaseController
      */
     public function getStatus(): JsonResponse
     {
-        return $this->sendResponse(RequestStatusResource::collection(RequestStatus::all()));
+        return $this->sendResponse(RequestStatusResource::collection(RequestStatus::all()), __('request.status'));
     }
 
     /**
@@ -194,6 +194,7 @@ class RequestController extends BaseController
         }
 
         $pdf = PDF::loadView('request_pdf', ['requests' => $this->requestService->getAll($request->user())]);
+
         return $pdf->output();
     }
 }

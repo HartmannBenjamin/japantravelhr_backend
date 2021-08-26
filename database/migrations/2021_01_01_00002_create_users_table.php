@@ -21,7 +21,6 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('image_name')->default('test.png');
             $table->foreignId('role_id')->default(1)->constrained();
-            $table->rememberToken();
             $table->timestamps();
         });
 

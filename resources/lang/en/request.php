@@ -8,4 +8,5 @@ return [
     'updated' => 'Request updated successfully.',
     'wrong_status' => 'Wrong status provided',
     'validation_error' => 'Validation Error.',
+    'status' => 'Here\'s all the request status.'
 ];

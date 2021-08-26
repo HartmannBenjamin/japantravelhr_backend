@@ -190,6 +190,11 @@ return [
          * PDF Generator ...
          */
         Barryvdh\DomPDF\ServiceProvider::class,
+
+        /*
+         * Image Service ...
+         */
+        Intervention\Image\ImageServiceProvider::class
     ],
 
     /*
@@ -244,6 +249,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Image' => Intervention\Image\Facades\Image::class
 
     ],
 

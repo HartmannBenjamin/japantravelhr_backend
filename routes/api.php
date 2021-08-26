@@ -43,6 +43,6 @@ Route::get('projectFile', function () {
     return response()->download(
          storage_path("pdf/project.pdf"),
         'project.pdf',
-        ['Content-Type' => 'application/pdf',]
+        ['Content-Type' => 'application/pdf']
     );
 });

@@ -60,9 +60,12 @@
             "@php artisan db:create-test"
         ],
         "install-project": [
-            "@composer run reset-database",
+            "@composer install",
             "@composer update",
-            "@npm install",
+            "@php artisan db:drop",
+            "@php artisan db:create",
+            "@php artisan migrate",
+            "@php artisan db:create-test",
             "@php artisan key:generate",
             "@php artisan vendor:publish --provider=\"Tymon\\JWTAuth\\Providers\\LaravelServiceProvider\""
         ],

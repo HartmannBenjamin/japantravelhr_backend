@@ -13,12 +13,10 @@ class RequestService
     public const STATUS_OPEN = 1;
     public const STATUS_PROCESSED = 2;
     public const STATUS_HR_REVIEWED = 3;
-    public const STATUS_COMPLETE = 4;
     public const ALL_STATUS = [
         self::STATUS_OPEN,
         self::STATUS_PROCESSED,
-        self::STATUS_HR_REVIEWED,
-        self::STATUS_COMPLETE
+        self::STATUS_HR_REVIEWED
     ];
 
     /**
@@ -31,8 +29,11 @@ class RequestService
         if ($user->isUser()) {
             $requestEntities = RequestEntity::where('user_id', $user->id)->get();
         } else if ($user->isManager()) {
-            $requestEntities = RequestEntity::where('status_id', '=', self::STATUS_HR_REVIEWED)
-                ->orWhere('status_id', '=', self::STATUS_COMPLETE)->get();
+            $requestEntities = RequestEntity::where(
+                'status_id',
+                '=',
+                self::STATUS_HR_REVIEWED
+            )->get();
         } else {
             $requestEntities = RequestEntity::all();
         }
@@ -126,10 +127,8 @@ class RequestService
                 return '"Open"';
             case self::STATUS_PROCESSED:
                 return '"Processed"';
-            case self::STATUS_HR_REVIEWED:
-                return '"HR Reviewed"';
         }
 
-        return '"Complete"';
+        return '"HR Reviewed"';
     }
 }

@@ -26,19 +26,14 @@ class CreateRequestStatusTable extends Migration
             'description' => 'The request is waiting for an HR staff to review it.'
         ]);
         DB::table('requests_status')->insert([
-            'name' => 'Processed',
-            'description' => 'The request is in process.',
-            'color_code' => '#9FA8FF'
-        ]);
-        DB::table('requests_status')->insert([
             'name' => 'Hr Reviewed',
-            'description' => 'The request has been reviewed by HR staff.',
+            'description' => 'A manager will process your request.',
             'color_code' => '#A1F1FF'
         ]);
         DB::table('requests_status')->insert([
-            'name' => 'Complete',
-            'description' => 'The request has been completed by a Manager.',
-            'color_code' => '#85F37C'
+            'name' => 'Processed',
+            'description' => 'The request is complete.',
+            'color_code' => '#9FA8FF'
         ]);
     }
 

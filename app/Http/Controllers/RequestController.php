@@ -136,12 +136,11 @@ class RequestController extends BaseController
         $requestEntity = RequestEntity::findOrFail($id);
         $statusId = $request->get('status_id');
 
-        if (!$request->user()->isHR() || $requestEntity->status_id == RequestService::STATUS_COMPLETE) {
+        if (!$request->user()->isHR()) {
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        if ($statusId == null || !is_numeric($statusId) || !in_array($statusId, RequestService::ALL_STATUS)
-            || $statusId == RequestService::STATUS_COMPLETE) {
+        if ($statusId == null || !is_numeric($statusId) || !in_array($statusId, RequestService::ALL_STATUS)) {
             return $this->sendError(__('request.wrong_status'));
         }
 
@@ -170,7 +169,7 @@ class RequestController extends BaseController
         $requestEntityUpdated = $this->requestService->updateStatus(
             $requestEntity,
             $request->user()->id,
-            RequestService::STATUS_COMPLETE
+            RequestService::STATUS_PROCESSED
         );
 
         return $this->sendResponse($requestEntityUpdated, __('request.updated'));
@@ -195,7 +194,10 @@ class RequestController extends BaseController
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        $pdf = PDF::loadView('request_pdf', ['requests' => $this->requestService->getAll($request->user())]);
+        $pdf = PDF::loadView(
+            'request_pdf',
+            ['requests' => RequestResource::collection(RequestEntity::all())]
+        );
 
         return $pdf->output();
     }

@@ -11,8 +11,8 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class RequestService
 {
     public const STATUS_OPEN = 1;
-    public const STATUS_PROCESSED = 2;
-    public const STATUS_HR_REVIEWED = 3;
+    public const STATUS_HR_REVIEWED = 2;
+    public const STATUS_PROCESSED = 3;
     public const ALL_STATUS = [
         self::STATUS_OPEN,
         self::STATUS_PROCESSED,

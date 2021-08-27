@@ -56,7 +56,15 @@
         "reset-database": [
             "@php artisan db:drop",
             "@php artisan db:create",
-            "@php artisan migrate"
+            "@php artisan migrate",
+            "@php artisan db:create-test"
+        ],
+        "install-project": [
+            "@composer run reset-database",
+            "@composer update",
+            "@npm install",
+            "@php artisan key:generate",
+            "@php artisan vendor:publish --provider=\"Tymon\\JWTAuth\\Providers\\LaravelServiceProvider\""
         ],
         "phpunit": [
             "./vendor/bin/phpunit"

@@ -18,7 +18,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-push": "php artisan test"
+            "pre-push": "php artisan test --filter 'Tests\\Unit'"
         }
     }
 }

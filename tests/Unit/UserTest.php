@@ -34,4 +34,14 @@ class UserTest extends TestCase
         $user->role_id = self::ROLE_MANAGER;
         $this->assertTrue($user->isManager());
     }
+
+    /** @test */
+    public function testRoleRelation()
+    {
+        $user = new User();
+        $user->role_id = self::ROLE_USER;
+
+        $this->assertEquals(self::ROLE_USER, $user->role_id);
+        $this->assertEquals(self::ROLE_USER, $user->role->id);
+    }
 }

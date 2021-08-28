@@ -162,7 +162,7 @@ class RequestController extends BaseController
     {
         $requestEntity = RequestEntity::findOrFail($id);
 
-        if ($requestEntity->status_id !== RequestService::STATUS_HR_REVIEWED || !$request->user()->isManager()) {
+        if ($requestEntity->status_id != RequestService::STATUS_HR_REVIEWED || !$request->user()->isManager()) {
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
@@ -194,10 +194,11 @@ class RequestController extends BaseController
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        $pdf = PDF::loadView(
-            'request_pdf',
-            ['requests' => RequestResource::collection(RequestEntity::all())]
+        $requestsCollection = RequestResource::collection(
+            RequestEntity::orderBy('updated_at', 'DESC')->get()
         );
+
+        $pdf = PDF::loadView('request_pdf', ['requests' => $requestsCollection]);
 
         return $pdf->output();
     }

@@ -1,5 +1,7 @@
 <?php
 
+namespace database\migrations;
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -14,10 +16,13 @@ class CreateRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-        });
+        Schema::create(
+            'roles',
+            function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+            }
+        );
 
         DB::table('roles')->insert(['name' => 'User']);
         DB::table('roles')->insert(['name' => 'HR']);

@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-
 /**
  * Class Request
  *
@@ -15,7 +14,7 @@ class Request extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -27,9 +26,12 @@ class Request extends JsonResource
             $logsData[] = array_merge($log->toArray(), ['user' => new User($log->user)]);
         }
 
-        usort($logsData, function ($a, $b) {
-            return strtotime($b['created_at']) - strtotime($a['created_at']);
-        });
+        usort(
+            $logsData,
+            function ($a, $b) {
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
+            }
+        );
 
         return [
             'id' => $this->id,

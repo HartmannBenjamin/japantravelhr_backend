@@ -28,7 +28,7 @@ class RequestService
     {
         if ($user->isUser()) {
             $requestEntities = RequestEntity::where('user_id', $user->id)->get();
-        } else if ($user->isManager()) {
+        } elseif ($user->isManager()) {
             $requestEntities = RequestEntity::where(
                 'status_id',
                 '=',
@@ -42,7 +42,7 @@ class RequestService
     }
 
     /**
-     * @param int $userId
+     * @param int    $userId
      * @param string $subject
      * @param string $description
      *
@@ -68,9 +68,9 @@ class RequestService
 
     /**
      * @param RequestEntity $requestEntity
-     * @param int $userId
-     * @param string $subject
-     * @param string $description
+     * @param int           $userId
+     * @param string        $subject
+     * @param string        $description
      *
      * @return RequestResource
      */
@@ -79,8 +79,7 @@ class RequestService
         int $userId,
         string $subject,
         string $description
-    ): RequestResource
-    {
+    ): RequestResource {
         $requestEntity->subject = $subject;
         $requestEntity->description = $description;
         $requestEntity->save();
@@ -96,8 +95,8 @@ class RequestService
 
     /**
      * @param RequestEntity $requestEntity
-     * @param int $userId
-     * @param int $statusId
+     * @param int           $userId
+     * @param int           $statusId
      *
      * @return RequestResource
      */

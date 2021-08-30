@@ -19,7 +19,7 @@ class RequestFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'subject' => $this->faker->text(40),

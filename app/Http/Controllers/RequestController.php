@@ -15,6 +15,7 @@ use App\Http\Resources\Status as RequestStatusResource;
 
 /**
  * Class RequestController
+ *
  * @package App\Http\Controllers
  */
 class RequestController extends BaseController
@@ -46,7 +47,7 @@ class RequestController extends BaseController
     /**
      * Display the specified request.
      *
-     * @param int $id
+     * @param int     $id
      * @param Request $request
      *
      * @return JsonResponse
@@ -81,7 +82,7 @@ class RequestController extends BaseController
 
         $validator = Validator::make($input, RequestEntity::$rules);
 
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError(__('request.validation_error'), $validator->errors());
         }
 
@@ -95,7 +96,7 @@ class RequestController extends BaseController
     /**
      * Update the specified request in storage.
      *
-     * @param int $id
+     * @param int     $id
      * @param Request $request
      *
      * @return JsonResponse
@@ -107,13 +108,14 @@ class RequestController extends BaseController
         $input = $request->all();
 
         if (!$user->isUser() || $requestEntity->status_id != RequestService::STATUS_OPEN
-            || $user->id != $requestEntity->user_id) {
+            || $user->id != $requestEntity->user_id
+        ) {
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
         $validator = Validator::make($input, RequestEntity::$rules);
 
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError(__('request.validation_error'), $validator->errors());
         }
 
@@ -126,7 +128,7 @@ class RequestController extends BaseController
     /**
      * Update the status of  the specified request in storage for HR role.
      *
-     * @param int $id
+     * @param int     $id
      * @param Request $request
      *
      * @return JsonResponse
@@ -153,7 +155,7 @@ class RequestController extends BaseController
     /**
      * Update the status of  the specified request in storage for Manager role.
      *
-     * @param int $id
+     * @param int     $id
      * @param Request $request
      *
      * @return JsonResponse

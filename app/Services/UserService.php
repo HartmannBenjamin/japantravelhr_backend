@@ -10,9 +10,11 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 /**
  * Class UserService
+ *
  * @package App\Services
  */
-class UserService {
+class UserService
+{
 
     /**
      * @param $file

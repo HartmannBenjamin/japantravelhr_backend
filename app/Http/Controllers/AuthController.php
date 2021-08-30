@@ -32,15 +32,18 @@ class AuthController extends BaseController
     {
         $input = $request->all();
 
-        $validator = Validator::make($input, [
+        $validator = Validator::make(
+            $input,
+            [
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required',
             'role_id' => 'required',
             'c_password' => 'required|same:password',
-        ]);
+            ]
+        );
 
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
         }
 
@@ -68,13 +71,16 @@ class AuthController extends BaseController
      */
     public function login(Request $request): JsonResponse
     {
-//        JWTAuth::factory()->setTTL(1);
+        //        JWTAuth::factory()->setTTL(1);
         $credentials = $request->only('email', 'password');
 
-        $validator = Validator::make($credentials, [
+        $validator = Validator::make(
+            $credentials,
+            [
             'email' => 'required|email',
             'password' => 'required|string|min:4|max:50'
-        ]);
+            ]
+        );
 
         if ($validator->fails()) {
             return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
@@ -164,12 +170,15 @@ class AuthController extends BaseController
         }
 
         if (isset($input['password'])) {
-            $validator = Validator::make($input, [
+            $validator = Validator::make(
+                $input,
+                [
                 'password' => 'required',
                 'c_password' => 'required|same:password',
-            ]);
+                ]
+            );
 
-            if ($validator->fails()){
+            if ($validator->fails()) {
                 return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
             }
 
@@ -179,7 +188,8 @@ class AuthController extends BaseController
         $user->name = $input['name'];
         $user->save();
 
-        return $this->sendResponse(new UserResource($user),
+        return $this->sendResponse(
+            new UserResource($user),
             __('auth.user_updated')
         );
     }

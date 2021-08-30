@@ -53,10 +53,11 @@ class DatabaseDropCommand extends Command
     }
 
     /**
-     * @param string $host
+     * @param string  $host
      * @param integer $port
-     * @param string $username
-     * @param string $password
+     * @param string  $username
+     * @param string  $password
+     *
      * @return PDO
      */
     private function getPDOConnection(string $host, int $port, string $username, string $password): PDO

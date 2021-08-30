@@ -35,5 +35,4 @@ class RequestLog extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 }

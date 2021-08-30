@@ -16,6 +16,7 @@
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
+        "squizlabs/php_codesniffer": "3.*",
         "barryvdh/laravel-ide-helper": "^2.10",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",

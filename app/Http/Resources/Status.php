@@ -2,20 +2,20 @@
 
 namespace App\Http\Resources;
 
+use App\Models\RequestStatus;
 use Illuminate\Http\Resources\Json\JsonResource;
-
 
 /**
  * Class Role
  *
- * @mixin \App\Models\RequestStatus
+ * @mixin RequestStatus
  * */
 class Status extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

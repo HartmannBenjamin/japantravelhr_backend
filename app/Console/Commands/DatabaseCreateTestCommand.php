@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Services\DatabaseService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
-use PDO;
 use PDOException;
 
 class DatabaseCreateTestCommand extends Command
@@ -44,9 +44,7 @@ class DatabaseCreateTestCommand extends Command
         }
 
         try {
-            $pdo = $this->getPDOConnection(env('DB_HOST'), env('DB_PORT'), env('DB_USERNAME'), env('DB_PASSWORD'));
-
-            $pdo->exec('CREATE DATABASE IF NOT EXISTS ' . $database . ' ;');
+            (new DatabaseService())->createDatabase($database);
 
             Config::set('database.connections.mysql.database', $database);
             Artisan::call("migrate --database=mysql");
@@ -55,18 +53,5 @@ class DatabaseCreateTestCommand extends Command
         } catch (PDOException $exception) {
             $this->error(sprintf('Failed to create %s database, %s', $database, $exception->getMessage()));
         }
-    }
-
-    /**
-     * @param string  $host
-     * @param integer $port
-     * @param string  $username
-     * @param string  $password
-     *
-     * @return PDO
-     */
-    private function getPDOConnection(string $host, int $port, string $username, string $password): PDO
-    {
-        return new PDO(sprintf('mysql:host=%s;port=%d;', $host, $port), $username, $password);
     }
 }

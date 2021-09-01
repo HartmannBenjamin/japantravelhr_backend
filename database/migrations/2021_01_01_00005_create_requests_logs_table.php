@@ -1,7 +1,5 @@
 <?php
 
-namespace database\migrations;
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -33,14 +31,6 @@ class CreateRequestsLogsTable extends Migration
 
                 $table->dateTime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             }
-        );
-
-        DB::table('requests_logs')->insert(
-            [
-            'message' => 'Request created by user',
-            'request_id' => 1,
-            'user_id' => 1,
-            ]
         );
     }
 

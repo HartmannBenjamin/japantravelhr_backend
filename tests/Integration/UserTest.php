@@ -29,7 +29,8 @@ class UserTest extends TestCase
         'role_id' => self::ROLE_MANAGER,
     ];
 
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         parent::setUp();
 
         $password = 'testPHPUNIT';
@@ -65,10 +66,12 @@ class UserTest extends TestCase
         $attributes['password'] = $password;
         $attributes['c_password'] = $password;
 
-        $newUser = json_decode($this->post(
-            'api/register',
-            $attributes
-        )->assertStatus(201)->getContent(), true)['data']['user'];
+        $newUser = json_decode(
+            $this->post(
+                'api/register',
+                $attributes
+            )->assertStatus(201)->getContent(), true
+        )['data']['user'];
 
         $this->post('api/login', ['email' => $newUser['email'], 'password' => $password])
             ->assertStatus(200);
@@ -78,7 +81,7 @@ class UserTest extends TestCase
     public function createNewUserWithAnExistentEmail() {
         $attributes = $this->dataUser;
 
-        # email already exists in database
+        // email already exists in database
         $attributes['email'] = $this->user->email;
 
         $this->post('api/register', $attributes)->assertStatus(404);
@@ -89,10 +92,12 @@ class UserTest extends TestCase
     {
         $this->post('api/login')->assertStatus(422);
 
-        $token = json_decode($this->post(
-            'api/login',
-            ['email' => $this->user->email, 'password' => $this->password]
-        )->assertStatus(200)->getContent(), true)['token'];
+        $token = json_decode(
+            $this->post(
+                'api/login',
+                ['email' => $this->user->email, 'password' => $this->password]
+            )->assertStatus(200)->getContent(), true
+        )['token'];
 
         $this->get('api/me', ['authorization' => "bearer $token"])->assertStatus(200);
     }
@@ -123,8 +128,10 @@ class UserTest extends TestCase
             'name' => $name
         ];
 
-        $updatedUserName = json_decode($this->putJson('api/update', $attributes, ['authorization' => "bearer $this->token"])
-            ->assertStatus(200)->getContent(), true)['data']['name'];
+        $updatedUserName = json_decode(
+            $this->putJson('api/update', $attributes, ['authorization' => "bearer $this->token"])
+                ->assertStatus(200)->getContent(), true
+        )['data']['name'];
 
         $this->assertEquals($updatedUserName, $name);
     }
@@ -178,8 +185,10 @@ class UserTest extends TestCase
     /** @test */
     public function getUserInformationAndVerifyIt()
     {
-        $jsonUser = json_decode($this->get('api/me', ['authorization' => "bearer $this->token"])->assertStatus(200)
-            ->getContent(), true);
+        $jsonUser = json_decode(
+            $this->get('api/me', ['authorization' => "bearer $this->token"])->assertStatus(200)
+                ->getContent(), true
+        );
 
         $collection = json_decode((new \App\Http\Resources\User($this->user))->toJson(), true);
 
@@ -189,8 +198,10 @@ class UserTest extends TestCase
     /** @test */
     public function checkIfEmailAlreadyUsedIsAvailable()
     {
-        $response = json_decode($this->post('api/emailAvailable', ['email' => $this->user->email])->assertStatus(200)
-            ->getContent(), true);
+        $response = json_decode(
+            $this->post('api/emailAvailable', ['email' => $this->user->email])->assertStatus(200)
+                ->getContent(), true
+        );
 
         $this->assertFalse($response['data']);
     }
@@ -198,8 +209,10 @@ class UserTest extends TestCase
     /** @test */
     public function checkIfRandomEmailIsAvailable()
     {
-        $response = json_decode($this->post('api/emailAvailable', ['email' => 'test@phpunit.com'])->assertStatus(200)
-            ->getContent(), true);
+        $response = json_decode(
+            $this->post('api/emailAvailable', ['email' => 'test@phpunit.com'])->assertStatus(200)
+                ->getContent(), true
+        );
 
         $this->assertTrue($response['data']);
     }
@@ -213,8 +226,10 @@ class UserTest extends TestCase
     {
         $this->get('api/me', ['authorization' => "bearer $this->token"])->assertStatus(200);
 
-        $refreshToken = json_decode($this->get('api/refreshToken', ['authorization' => "bearer $this->token"])->assertStatus(200)
-            ->getContent(), true)['token'];
+        $refreshToken = json_decode(
+            $this->get('api/refreshToken', ['authorization' => "bearer $this->token"])->assertStatus(200)
+                ->getContent(), true
+        )['token'];
 
         $this->get('api/me', ['authorization' => "bearer $this->token"])->assertStatus(401);
         $this->get('api/me', ['authorization' => "bearer $refreshToken"])->assertStatus(200);
@@ -225,11 +240,13 @@ class UserTest extends TestCase
     {
         $image = UploadedFile::fake()->image('avatar.jpg');
 
-        $imageUrl = json_decode($this->post(
-            'api/uploadImage',
-            ['file' => $image],
-            ['authorization' => "bearer $this->token"]
-        )->assertStatus(200)->getContent(), true)['data']['image_url'];
+        $imageUrl = json_decode(
+            $this->post(
+                'api/uploadImage',
+                ['file' => $image],
+                ['authorization' => "bearer $this->token"]
+            )->assertStatus(200)->getContent(), true
+        )['data']['image_url'];
 
         $this->assertStringContainsString('avatar.jpg', $imageUrl);
         $this->user->refresh();

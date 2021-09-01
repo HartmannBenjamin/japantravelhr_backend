@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Services\DatabaseService;
 use Illuminate\Console\Command;
-use PDO;
 use PDOException;
 
 class DatabaseDropCommand extends Command
@@ -42,26 +42,11 @@ class DatabaseDropCommand extends Command
         }
 
         try {
-            $pdo = $this->getPDOConnection(env('DB_HOST'), env('DB_PORT'), env('DB_USERNAME'), env('DB_PASSWORD'));
-
-            $pdo->exec('DROP DATABASE IF EXISTS ' . $database . ' ;');
+            (new DatabaseService())->dropDatabase($database);
 
             $this->info(sprintf('Successfully drop %s database', $database));
         } catch (PDOException $exception) {
             $this->error(sprintf('Failed to drop %s database, %s', $database, $exception->getMessage()));
         }
-    }
-
-    /**
-     * @param string  $host
-     * @param integer $port
-     * @param string  $username
-     * @param string  $password
-     *
-     * @return PDO
-     */
-    private function getPDOConnection(string $host, int $port, string $username, string $password): PDO
-    {
-        return new PDO(sprintf('mysql:host=%s;port=%d;', $host, $port), $username, $password);
     }
 }

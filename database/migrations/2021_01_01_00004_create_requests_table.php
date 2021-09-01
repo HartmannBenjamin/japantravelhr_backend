@@ -1,7 +1,5 @@
 <?php
 
-namespace database\migrations;
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -34,17 +32,6 @@ class CreateRequestsTable extends Migration
 
                 $table->timestamps();
             }
-        );
-
-        DB::table('requests')->insert(
-            [
-            'subject' => 'Problem',
-            'description' => 'This is problem description.',
-            'user_id' => 1,
-            'status_id' => 1,
-            'created_at' => new DateTime('now'),
-            'updated_at' => new DateTime('now'),
-            ]
         );
     }
 

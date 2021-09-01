@@ -6,8 +6,14 @@ use App\Http\Resources\Request as RequestResource;
 use App\Models\Request as RequestEntity;
 use App\Models\RequestLog;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
+/**
+ * Class RequestService
+ *
+ * @package App\Services
+ */
 class RequestService
 {
     public const STATUS_OPEN = 1;
@@ -68,7 +74,6 @@ class RequestService
 
     /**
      * @param RequestEntity $requestEntity
-     * @param int           $userId
      * @param string        $subject
      * @param string        $description
      *
@@ -76,7 +81,6 @@ class RequestService
      */
     public function update(
         RequestEntity $requestEntity,
-        int $userId,
         string $subject,
         string $description
     ): RequestResource {
@@ -86,7 +90,7 @@ class RequestService
 
         $requestLog = new RequestLog();
         $requestLog->message = 'Request updated by user';
-        $requestLog->user_id = $userId;
+        $requestLog->user_id = $requestEntity->user_id;
         $requestLog->request_id = $requestEntity->id;
         $requestLog->save();
 
@@ -122,12 +126,28 @@ class RequestService
     private function getNameStatus(int $statusId): string
     {
         switch ($statusId) {
-            case self::STATUS_OPEN:
-                return '"Open"';
-            case self::STATUS_PROCESSED:
-                return '"Processed"';
+        case self::STATUS_OPEN:
+            return '"Open"';
+        case self::STATUS_PROCESSED:
+            return '"Processed"';
         }
 
         return '"HR Reviewed"';
+    }
+
+    /**
+     * @param $input
+     *
+     * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
+     */
+    public function validateRequestData($input)
+    {
+        return Validator::make(
+            $input,
+            [
+                'subject' => 'required|string|min:4|max:200',
+                'description' => 'required|string|min:10|max:500',
+            ]
+        );
     }
 }

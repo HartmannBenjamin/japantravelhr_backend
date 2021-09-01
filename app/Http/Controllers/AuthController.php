@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\Role as RoleResource;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -14,13 +14,17 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends BaseController
 {
+    protected $userService;
 
     /**
      * AuthController constructor.
+     *
+     * @param UserService $userService
      */
-    public function __construct()
+    public function __construct(UserService $userService)
     {
         $this->middleware('jwt.verify')->except(['login', 'register', 'emailAvailable', 'getRoles']);
+        $this->userService = $userService;
     }
 
     /**
@@ -31,17 +35,7 @@ class AuthController extends BaseController
     public function register(Request $request): JsonResponse
     {
         $input = $request->all();
-
-        $validator = Validator::make(
-            $input,
-            [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'role_id' => 'required',
-            'c_password' => 'required|same:password',
-            ]
-        );
+        $validator = $this->userService->validateRegisterData($input);
 
         if ($validator->fails()) {
             return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
@@ -71,16 +65,9 @@ class AuthController extends BaseController
      */
     public function login(Request $request): JsonResponse
     {
-        //        JWTAuth::factory()->setTTL(1);
         $credentials = $request->only('email', 'password');
 
-        $validator = Validator::make(
-            $credentials,
-            [
-            'email' => 'required|email',
-            'password' => 'required|string|min:4|max:50'
-            ]
-        );
+        $validator = $this->userService->validateLoginData($credentials);
 
         if ($validator->fails()) {
             return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
@@ -170,13 +157,7 @@ class AuthController extends BaseController
         }
 
         if (isset($input['password'])) {
-            $validator = Validator::make(
-                $input,
-                [
-                'password' => 'required',
-                'c_password' => 'required|same:password',
-                ]
-            );
+            $validator = $this->userService->validateChangePasswordData($input);
 
             if ($validator->fails()) {
                 return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);

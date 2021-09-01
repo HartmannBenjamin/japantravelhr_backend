@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController ;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\UploadImageController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,4 +46,18 @@ Route::get('projectFile', function () {
         'project.pdf',
         ['Content-Type' => 'application/pdf']
     );
+});
+
+/*
+    Reset the database for cypress js test
+*/
+Route::get('resetDatabase', function () {
+    try {
+        Artisan::call('migrate:rollback');
+        Artisan::call("migrate");
+
+        return response()->json(['success' => true, 'message' => __('other.database_reset')]);
+    } catch (Exception $error) {
+        return response()->json(['success' => false, 'message' => $error->getMessage()]);
+    }
 });

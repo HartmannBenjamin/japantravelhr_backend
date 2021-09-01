@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
 use App\Models\Request as RequestEntity;
 use PDF;
-use Validator;
 use App\Http\Resources\Request as RequestResource;
 use App\Http\Resources\Status as RequestStatusResource;
 
@@ -80,10 +79,10 @@ class RequestController extends BaseController
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        $validator = Validator::make($input, RequestEntity::$rules);
+        $validator = $this->requestService->validateRequestData($input);
 
         if ($validator->fails()) {
-            return $this->sendError(__('request.validation_error'), $validator->errors());
+            return $this->sendError(__('request.validation_error'), $validator->messages());
         }
 
         return $this->sendResponse(
@@ -113,14 +112,14 @@ class RequestController extends BaseController
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        $validator = Validator::make($input, RequestEntity::$rules);
+        $validator = $this->requestService->validateRequestData($input);
 
         if ($validator->fails()) {
-            return $this->sendError(__('request.validation_error'), $validator->errors());
+            return $this->sendError(__('request.validation_error'), $validator->messages());
         }
 
         return $this->sendResponse(
-            $this->requestService->update($requestEntity, $user->id, $input['subject'], $input['description']),
+            $this->requestService->update($requestEntity, $input['subject'], $input['description']),
             __('request.updated')
         );
     }

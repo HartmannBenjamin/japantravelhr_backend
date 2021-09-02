@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Class Request
+ *
+ * @package App\Models
+ */
 class Request extends Model
 {
     use HasFactory, Notifiable;
@@ -21,7 +26,7 @@ class Request extends Model
         'subject',
         'description',
         'user_id',
-        'status_id'
+        'status_id',
     ];
 
     public function user(): BelongsTo

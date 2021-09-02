@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\AuthController ;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\UploadImageController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
-    Auth routes
+    Auth / User routes
 */
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -19,7 +19,7 @@ Route::get('roles', [AuthController::class, 'getRoles']);
 Route::put('update', [AuthController::class, 'update']);
 
 /*
-    Upload Image
+    Upload User Image
 */
 Route::post('uploadImage', [UploadImageController::class, 'uploadImage']);
 
@@ -38,7 +38,7 @@ Route::prefix('request')->middleware('jwt.verify')->group(function () {
 });
 
 /*
-    Get project subject file
+    Get project subject pdf file
 */
 Route::get('projectFile', function () {
     return response()->download(
@@ -53,8 +53,7 @@ Route::get('projectFile', function () {
 */
 Route::get('resetDatabase', function () {
     try {
-        Artisan::call('migrate:rollback');
-        Artisan::call("migrate");
+        Artisan::call('migrate:refresh');
 
         return response()->json(['success' => true, 'message' => __('other.database_reset')]);
     } catch (Exception $error) {

@@ -12,8 +12,16 @@ use App\Http\Resources\Role as RoleResource;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
+/**
+ * Class AuthController
+ *
+ * @package App\Http\Controllers
+ */
 class AuthController extends BaseController
 {
+    /**
+     * @var UserService $userService
+     */
     protected $userService;
 
     /**
@@ -38,7 +46,7 @@ class AuthController extends BaseController
         $validator = $this->userService->validateRegisterData($input);
 
         if ($validator->fails()) {
-            return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
+            return $this->sendError(__('auth.wrong_data'), $validator->errors(), 422);
         }
 
         if (User::where('email', '=', $input['email'])->exists()) {
@@ -66,11 +74,10 @@ class AuthController extends BaseController
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->only('email', 'password');
-
         $validator = $this->userService->validateLoginData($credentials);
 
         if ($validator->fails()) {
-            return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
+            return $this->sendError(__('auth.wrong_data'), $validator->errors(), 422);
         }
 
         if (!$token = auth()->attempt($credentials)) {
@@ -101,9 +108,7 @@ class AuthController extends BaseController
      */
     public function me(Request $request): JsonResponse
     {
-        $user = $request->user();
-
-        return $this->sendResponse(new UserResource($user), __('auth.user_info'));
+        return $this->sendResponse(new UserResource($request->user()), __('auth.user_info'));
     }
 
     /**
@@ -160,7 +165,7 @@ class AuthController extends BaseController
             $validator = $this->userService->validateChangePasswordData($input);
 
             if ($validator->fails()) {
-                return $this->sendError(__('auth.wrong_data'), $validator->messages(), 422);
+                return $this->sendError(__('auth.wrong_data'), $validator->errors(), 422);
             }
 
             $user->password = bcrypt($input['password']);

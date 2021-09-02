@@ -1,3 +1,4 @@
+![JapanTravelHR logo](http://api.benjamin-hartmann.fr/logo/logo.png)
 # JapanTravelHR Back-end API (Laravel)
 
 ## Database setup
@@ -30,3 +31,32 @@ npm install
 ```
 php artisan serve
 ```
+
+---
+
+## Default users informaiton
+```
+User :
+    - email: user@japantravel.com
+    - password: 1234
+    
+HR staff :
+    - email: hr@japantravel.com
+    - password: 1234
+    
+Manager :
+    - email: manager@japantravel.com
+    - password: 1234
+```
+
+## Launch tests
+```
+php artisan test
+```
+
+## Links
+
+- [Postman Workspace (Endpoint collection)](https://www.postman.com/benjaminhartmann/workspace/japantravelhr/overview)
+- [API Documentation](https://documenter.getpostman.com/view/17271595/TzzHksRe)
+- [Front-end git repository](https://github.com/HartmannBenjamin/japantravelhr_client)
+- [Back-end git repository](https://github.com/HartmannBenjamin/japantravelhr_backend)

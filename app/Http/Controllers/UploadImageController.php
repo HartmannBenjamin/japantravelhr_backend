@@ -7,12 +7,20 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Class UploadImageController
+ *
+ * @package App\Http\Controllers
+ */
 class UploadImageController extends BaseController
 {
+    /**
+     * @var UserService $userService
+     */
     protected $userService;
 
     /**
-     * Instantiate a new controller instance.
+     * UploadImageController constructor.
      *
      * @param UserService $userService
      */
@@ -25,20 +33,25 @@ class UploadImageController extends BaseController
      * @param Request $request
      *
      * @return JsonResponse
-     *
      * @throws ValidationException
      */
     public function uploadImage(Request $request): JsonResponse
     {
+        $user = $request->user();
+
+        if (!$user) {
+            return $this->sendError(__('auth.invalid_token'));
+        }
+
         $this->validate(
             $request,
             [
-            'file'  => 'required|image|mimes:jpg,png|max:2048'
+                'file'  => 'required|image|mimes:jpg,png|max:2048'
             ]
         );
 
         return $this->sendResponse(
-            $this->userService->uploadUserImage($request->file('file'), $request->user()),
+            $this->userService->uploadUserImage($request->file('file'), $user),
             __('other.image_upload')
         );
     }

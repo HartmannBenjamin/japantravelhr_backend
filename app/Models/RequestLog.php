@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Class RequestLog
+ *
+ * @package App\Models
+ */
 class RequestLog extends Model
 {
     use HasFactory, Notifiable;

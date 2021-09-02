@@ -9,6 +9,11 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
+/**
+ * Class RequestTest
+ *
+ * @package Tests\Integration
+ */
 class RequestTest extends TestCase
 {
     use WithFaker;
@@ -91,7 +96,7 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function getRequestByIdAsUserWhoDontCreateIt()
+    public function getRequestByIdAsOtherUser()
     {
         $this->get('api/request/get/' . $this->request->id, ['authorization' => "bearer $this->token_user"])
             ->assertStatus(403);
@@ -190,7 +195,7 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function tryToUpdateARequestAsOtherUser()
+    public function tryToUpdateRequestAsOtherUser()
     {
         $this->put(
             'api/request/edit/' . $this->request->id,
@@ -226,7 +231,7 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function tryToUpdateAProcessedRequest()
+    public function tryToUpdateProcessedRequest()
     {
         $request = Request::factory()->create(['user_id' => $this->user->id, 'status_id' => self::STATUS_PROCESSED]);
 
@@ -240,7 +245,7 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function tryToUpdateAHrReviewedRequest()
+    public function tryToUpdateHrReviewedRequest()
     {
         $request = Request::factory()->create(['user_id' => $this->user->id, 'status_id' => self::STATUS_HR_REVIEWED]);
 
@@ -270,7 +275,7 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function changeRequestStatusPassingNonexistentStatusId()
+    public function changeRequestStatusPassingNonExistentStatusId()
     {
         $this->put(
             'api/request/changeStatus/' . $this->request->id,

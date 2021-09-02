@@ -19,10 +19,13 @@ use App\Http\Resources\Status as RequestStatusResource;
  */
 class RequestController extends BaseController
 {
+    /**
+     * @var RequestService $requestService
+     */
     protected $requestService;
 
     /**
-     * Instantiate a new controller instance.
+     * RequestController constructor.
      *
      * @param RequestService $requestService
      */
@@ -32,8 +35,6 @@ class RequestController extends BaseController
     }
 
     /**
-     * Display a listing of the request.
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -44,8 +45,6 @@ class RequestController extends BaseController
     }
 
     /**
-     * Display the specified request.
-     *
      * @param int     $id
      * @param Request $request
      *
@@ -64,8 +63,6 @@ class RequestController extends BaseController
     }
 
     /**
-     * Store a newly created request in storage.
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -82,7 +79,7 @@ class RequestController extends BaseController
         $validator = $this->requestService->validateRequestData($input);
 
         if ($validator->fails()) {
-            return $this->sendError(__('request.validation_error'), $validator->messages());
+            return $this->sendError(__('request.validation_error'), $validator->errors());
         }
 
         return $this->sendResponse(
@@ -93,8 +90,6 @@ class RequestController extends BaseController
     }
 
     /**
-     * Update the specified request in storage.
-     *
      * @param int     $id
      * @param Request $request
      *
@@ -115,7 +110,7 @@ class RequestController extends BaseController
         $validator = $this->requestService->validateRequestData($input);
 
         if ($validator->fails()) {
-            return $this->sendError(__('request.validation_error'), $validator->messages());
+            return $this->sendError(__('request.validation_error'), $validator->errors());
         }
 
         return $this->sendResponse(
@@ -125,8 +120,6 @@ class RequestController extends BaseController
     }
 
     /**
-     * Update the status of  the specified request in storage for HR role.
-     *
      * @param int     $id
      * @param Request $request
      *
@@ -136,8 +129,9 @@ class RequestController extends BaseController
     {
         $requestEntity = RequestEntity::findOrFail($id);
         $statusId = $request->get('status_id');
+        $user = $request->user();
 
-        if (!$request->user()->isHR()) {
+        if (!$user->isHR()) {
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
@@ -146,14 +140,12 @@ class RequestController extends BaseController
         }
 
         return $this->sendResponse(
-            $this->requestService->updateStatus($requestEntity, $request->user()->id, $statusId),
+            $this->requestService->updateStatus($requestEntity, $user->id, $statusId),
             __('request.updated')
         );
     }
 
     /**
-     * Update the status of  the specified request in storage for Manager role.
-     *
      * @param int     $id
      * @param Request $request
      *
@@ -162,14 +154,15 @@ class RequestController extends BaseController
     public function updateStatusManager(int $id, Request $request): JsonResponse
     {
         $requestEntity = RequestEntity::findOrFail($id);
+        $user = $request->user();
 
-        if ($requestEntity->status_id != RequestService::STATUS_HR_REVIEWED || !$request->user()->isManager()) {
+        if ($requestEntity->status_id != RequestService::STATUS_HR_REVIEWED || !$user->isManager()) {
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
         $requestEntityUpdated = $this->requestService->updateStatus(
             $requestEntity,
-            $request->user()->id,
+            $user->id,
             RequestService::STATUS_PROCESSED
         );
 

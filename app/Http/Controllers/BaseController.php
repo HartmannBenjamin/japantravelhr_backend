@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller as Controller;
 
+/**
+ * Class BaseController
+ *
+ * @package App\Http\Controllers
+ */
 class BaseController extends Controller
 {
     /**

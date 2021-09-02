@@ -41,7 +41,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testRequestUserRelation()
     {
@@ -55,7 +55,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testRequestStatusRelation()
     {
@@ -69,7 +69,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testRequestLogRelation()
     {
@@ -89,7 +89,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testRequestResourceData()
     {
@@ -117,7 +117,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testRequestRoleResourceData()
     {
@@ -134,7 +134,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testGetAllRequestForUser()
     {
@@ -148,7 +148,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testGetAllRequestForHrStaff()
     {
@@ -156,7 +156,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testGetAllRequestForManager()
     {
@@ -170,7 +170,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testCreateRequestMethod()
     {
@@ -190,7 +190,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testUpdatedRequestMethod()
     {
@@ -214,7 +214,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testChangeStatusRequestMethod()
     {
@@ -237,7 +237,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testValidationDataRequestWithoutData()
     {
@@ -247,7 +247,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testValidationDataRequest()
     {
@@ -257,7 +257,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testValidationDataRequestTooLongSubject()
     {
@@ -270,7 +270,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
     public function testValidationDataRequestTooLongDescription()
     {
@@ -283,9 +283,9 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @test 
+     * @test
      */
-    public function testValidationDataRequestTypeData()
+    public function testValidationDataRequestTypeDataSubject()
     {
         $dataTest = $this->dataTestRequest;
         $dataTest['subject'] = $this->faker->randomNumber();

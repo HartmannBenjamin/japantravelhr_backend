@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use PDOException;
 
+/**
+ * Class DatabaseCreateTestCommand
+ *
+ * @package App\Console\Commands
+ */
 class DatabaseCreateTestCommand extends Command
 {
     /**

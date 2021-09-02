@@ -64,7 +64,7 @@ class RequestService
         $requestEntity->save();
 
         $requestLog = new RequestLog();
-        $requestLog->message = 'Request created by user';
+        $requestLog->message = __('request.log_created');
         $requestLog->user_id = $userId;
         $requestLog->request_id = $requestEntity->id;
         $requestLog->save();
@@ -89,7 +89,7 @@ class RequestService
         $requestEntity->save();
 
         $requestLog = new RequestLog();
-        $requestLog->message = 'Request updated by user';
+        $requestLog->message = __('request.log_updated');
         $requestLog->user_id = $requestEntity->user_id;
         $requestLog->request_id = $requestEntity->id;
         $requestLog->save();
@@ -110,7 +110,7 @@ class RequestService
         $requestEntity->save();
 
         $requestLog = new RequestLog();
-        $requestLog->message = 'Request status updated to ' . $this->getNameStatus($statusId);
+        $requestLog->message = __('request.log_status_updated') . $this->getNameStatus($statusId);
         $requestLog->user_id = $userId;
         $requestLog->request_id = $requestEntity->id;
         $requestLog->save();
@@ -127,12 +127,12 @@ class RequestService
     {
         switch ($statusId) {
         case self::STATUS_OPEN:
-            return '"Open"';
+            return __('request.status_open');
         case self::STATUS_PROCESSED:
-            return '"Processed"';
+            return __('request.status_processed');
         }
 
-        return '"HR Reviewed"';
+        return __('request.status_hr_reviewed');
     }
 
     /**

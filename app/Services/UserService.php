@@ -16,7 +16,6 @@ use Intervention\Image\ImageManagerStatic as Image;
  */
 class UserService
 {
-
     /**
      * @param $file
      * @param $user

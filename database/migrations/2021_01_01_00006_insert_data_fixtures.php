@@ -3,6 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Class InsertDataFixtures
+ */
 class InsertDataFixtures extends Migration
 {
     /**

@@ -6,7 +6,7 @@
     </head>
     <body>
         <h1> Requests </h1>
-        <table class="table table-bordered">
+        <table style="border: 1px solid gray">
             <thead>
             <tr>
                 <td><b>Subject</b></td>

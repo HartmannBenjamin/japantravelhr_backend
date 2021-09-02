@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Class RequestStatus
+ *
+ * @package App\Models
+ */
 class RequestStatus extends Model
 {
     use HasFactory, Notifiable;
@@ -21,7 +26,7 @@ class RequestStatus extends Model
     protected $fillable = [
         'name',
         'color_code',
-        'description'
+        'description',
     ];
 
     public function requests(): HasMany

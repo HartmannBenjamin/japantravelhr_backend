@@ -5,6 +5,11 @@ namespace Database\Factories;
 use App\Models\Request;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * Class RequestFactory
+ *
+ * @package Database\Factories
+ */
 class RequestFactory extends Factory
 {
     /**

@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Class Role
+ *
+ * @package App\Models
+ */
 class Role extends Model
 {
     use HasFactory, Notifiable;

@@ -4,9 +4,13 @@ namespace App\Services;
 
 use PDO;
 
+/**
+ * Class DatabaseService
+ *
+ * @package App\Services
+ */
 class DatabaseService
 {
-
     /**
      * @param $database
      */

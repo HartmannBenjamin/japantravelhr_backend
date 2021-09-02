@@ -33,7 +33,6 @@ class UserTest extends TestCase
         parent::setUp();
 
         $this->userService = new UserService();
-        $this->withoutExceptionHandling();
 
         $password = $this->faker->password;
 
@@ -54,6 +53,8 @@ class UserTest extends TestCase
             'password' => $password,
             'c_password' => $password,
         ];
+
+        $this->withoutExceptionHandling();
     }
 
     /**

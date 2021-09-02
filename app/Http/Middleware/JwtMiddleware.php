@@ -10,6 +10,11 @@ use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
+/**
+ * Class JwtMiddleware
+ *
+ * @package App\Http\Middleware
+ */
 class JwtMiddleware extends BaseMiddleware
 {
 
@@ -29,24 +34,24 @@ class JwtMiddleware extends BaseMiddleware
             if ($e instanceof TokenInvalidException) {
                 return response()->json(
                     [
-                    'success' => false,
-                    'message' => __('auth.invalid_token'),
+                        'success' => false,
+                        'message' => __('auth.invalid_token'),
                     ],
                     401
                 );
             } elseif ($e instanceof TokenExpiredException) {
                 return response()->json(
                     [
-                    'success' => 'token_expired',
-                    'message' => __('auth.expired_token'),
+                        'success' => 'token_expired',
+                        'message' => __('auth.expired_token'),
                     ],
                     401
                 );
             } else {
                 return response()->json(
                     [
-                    'success' => false,
-                    'message' => __('auth.token_not_found'),
+                        'success' => false,
+                        'message' => __('auth.token_not_found'),
                     ],
                     401
                 );

@@ -6,6 +6,11 @@ use App\Services\DatabaseService;
 use Illuminate\Console\Command;
 use PDOException;
 
+/**
+ * Class DatabaseDropCommand
+ *
+ * @package App\Console\Commands
+ */
 class DatabaseDropCommand extends Command
 {
     /**

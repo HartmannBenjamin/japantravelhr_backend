@@ -10,6 +10,11 @@ use Tests\TestCase;
 use Throwable;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
+/**
+ * Class UserTest
+ *
+ * @package Tests\Integration
+ */
 class UserTest extends TestCase
 {
     use WithFaker;
@@ -41,8 +46,11 @@ class UserTest extends TestCase
         $this->withoutExceptionHandling();
     }
 
-    /** @test */
-    public function registerAnUserWithWrongPasswordData() {
+    /**
+     * @test
+     */
+    public function registerAnUserWithWrongPasswordData()
+    {
         $attributes = [
             'name' => $this->faker->name,
             'email' => $this->faker->email,
@@ -54,7 +62,9 @@ class UserTest extends TestCase
         $this->post('api/register', $attributes)->assertStatus(422);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function createNewUserAndTryToLogin()
     {
         $this->get('api/roles')->assertStatus(200);
@@ -77,8 +87,11 @@ class UserTest extends TestCase
             ->assertStatus(200);
     }
 
-    /** @test */
-    public function createNewUserWithAnExistentEmail() {
+    /**
+     * @test
+     */
+    public function createNewUserWithAnExistentEmail()
+    {
         $attributes = $this->dataUser;
 
         // email already exists in database
@@ -87,7 +100,9 @@ class UserTest extends TestCase
         $this->post('api/register', $attributes)->assertStatus(404);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function loginAndGetUserInformation()
     {
         $this->post('api/login')->assertStatus(422);
@@ -102,26 +117,36 @@ class UserTest extends TestCase
         $this->get('api/me', ['authorization' => "bearer $token"])->assertStatus(200);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function loginWithRandomUserCredentials()
     {
         $this->post('api/login', ['email' => $this->faker->email, 'password' => $this->faker->password])
             ->assertStatus(401);
     }
 
-    /** @test */
-    public function getUserInformation() {
-        $user = json_decode($this->get(
-            'api/me',
-            ['authorization' => "bearer $this->token"]
-        )->assertStatus(200)->getContent(), true)['data'];
+    /**
+     * @test
+     */
+    public function getUserInformation()
+    {
+        $user = json_decode(
+            $this->get(
+                'api/me',
+                ['authorization' => "bearer $this->token"]
+            )->assertStatus(200)->getContent(), true
+        )['data'];
 
         $this->assertEquals($user['name'], $this->user->name);
         $this->assertEquals($user['email'], $this->user->email);
     }
 
-    /** @test */
-    public function updateUserName() {
+    /**
+     * @test
+     */
+    public function updateUserName()
+    {
         $name = $this->faker->name;
 
         $attributes = [
@@ -136,14 +161,20 @@ class UserTest extends TestCase
         $this->assertEquals($updatedUserName, $name);
     }
 
-    /** @test */
-    public function updateUserWithEmptyName() {
+    /**
+     * @test
+     */
+    public function updateUserWithEmptyName()
+    {
         $this->putJson('api/update', ['name' => ''], ['authorization' => "bearer $this->token"])
             ->assertStatus(404);
     }
 
-    /** @test */
-    public function updateUserPasswordAndTryToLogin() {
+    /**
+     * @test
+     */
+    public function updateUserPasswordAndTryToLogin()
+    {
         $password = $this->faker->password;
 
         $attributes = [
@@ -159,8 +190,11 @@ class UserTest extends TestCase
             ->assertStatus(200);
     }
 
-    /** @test */
-    public function updateUserWithWrongConfirmPassword() {
+    /**
+     * @test
+     */
+    public function updateUserWithWrongConfirmPassword()
+    {
         $attributes = [
             'name' => $this->user->name,
             'password' => 'password',
@@ -171,8 +205,11 @@ class UserTest extends TestCase
             ->assertStatus(422);
     }
 
-    /** @test */
-    public function updateUserWithoutConfirmPassword() {
+    /**
+     * @test
+     */
+    public function updateUserWithoutConfirmPassword()
+    {
         $attributes = [
             'name' => $this->user->name,
             'password' => 'password'
@@ -182,7 +219,9 @@ class UserTest extends TestCase
             ->assertStatus(422);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function getUserInformationAndVerifyIt()
     {
         $jsonUser = json_decode(
@@ -195,7 +234,9 @@ class UserTest extends TestCase
         $this->assertEquals($jsonUser['data'], $collection);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function checkIfEmailAlreadyUsedIsAvailable()
     {
         $response = json_decode(
@@ -206,7 +247,9 @@ class UserTest extends TestCase
         $this->assertFalse($response['data']);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function checkIfRandomEmailIsAvailable()
     {
         $response = json_decode(
@@ -235,7 +278,9 @@ class UserTest extends TestCase
         $this->get('api/me', ['authorization' => "bearer $refreshToken"])->assertStatus(200);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function uploadNewUserImage()
     {
         $image = UploadedFile::fake()->image('avatar.jpg');
@@ -254,7 +299,9 @@ class UserTest extends TestCase
         File::delete('images/' . $this->user->image_name);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function logoutUser()
     {
         $this->post('api/logout', [], ['authorization' => "bearer $this->token"])->assertStatus(200);

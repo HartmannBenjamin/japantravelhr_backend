@@ -6,7 +6,7 @@ use App\Models\RequestStatus;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class Role
+ * Class Status
  *
  * @mixin RequestStatus
  * */

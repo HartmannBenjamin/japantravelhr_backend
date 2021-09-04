@@ -20,3 +20,4 @@ yarn-error.log
 /app/Exceptions/Handler.php
 /package-lock.json
 /composer.lock
+/reports

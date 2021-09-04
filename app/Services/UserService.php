@@ -31,7 +31,7 @@ class UserService
         $imageResize->save(public_path('images') . '/' . $imageName);
 
         if ($user->image_name && $user->image_name != 'test.png') {
-            File::delete('images/' . $user->image_name);
+            File::delete(public_path('images') . '/' . $user->image_name);
         }
 
         $user->image_name = $imageName;

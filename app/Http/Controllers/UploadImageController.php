@@ -50,9 +50,12 @@ class UploadImageController extends BaseController
             ]
         );
 
-        return $this->sendResponse(
-            $this->userService->uploadUserImage($request->file('file'), $user),
-            __('other.image_upload')
-        );
+        try {
+            $user = $this->userService->uploadUserImage($request->file('file'), $user);
+        } catch (Exception $e) {
+            return $this->sendError(__('other.error'), [$e->getMessage()]);
+        }
+
+        return $this->sendResponse($user, __('other.image_upload'));
     }
 }

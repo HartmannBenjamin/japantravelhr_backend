@@ -18,6 +18,8 @@ class RequestStatus extends Model
 
     protected $table = 'requests_status';
 
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -31,6 +33,6 @@ class RequestStatus extends Model
 
     public function requests(): HasMany
     {
-        return $this->hasMany(Request::class);
+        return $this->hasMany(Request::class, 'status_id', 'id');
     }
 }

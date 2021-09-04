@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Resources\User as UserResource;
@@ -55,9 +56,13 @@ class AuthController extends BaseController
 
         $input['password'] = bcrypt($input['password']);
 
-        $user = User::create($input);
-        $user->role_id = $input['role_id'];
-        $user->save();
+        try {
+            $user = User::create($input);
+            $user->role_id = $input['role_id'];
+            $user->save();
+        } catch (Exception $e) {
+            return $this->sendError(__('other.error'), [$e->getMessage()]);
+        }
 
         return $this->sendResponse(
             ['token' => auth()->login($user), 'user' => new UserResource($user)],
@@ -171,8 +176,12 @@ class AuthController extends BaseController
             $user->password = bcrypt($input['password']);
         }
 
-        $user->name = $input['name'];
-        $user->save();
+        try {
+            $user->name = $input['name'];
+            $user->save();
+        } catch (Exception $e) {
+            return $this->sendError(__('other.error'), [$e->getMessage()]);
+        }
 
         return $this->sendResponse(
             new UserResource($user),

@@ -16,6 +16,8 @@ class Role extends Model
 {
     use HasFactory, Notifiable;
 
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *

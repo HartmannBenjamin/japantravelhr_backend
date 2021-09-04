@@ -29,14 +29,4 @@ class User extends JsonResource
             'updated_at' => $this->updated_at,
         ];
     }
-
-    public function getJWTIdentifier()
-    {
-        // TODO: Implement getJWTIdentifier() method.
-    }
-
-    public function getJWTCustomClaims()
-    {
-        // TODO: Implement getJWTCustomClaims() method.
-    }
 }

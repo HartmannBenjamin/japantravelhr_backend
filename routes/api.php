@@ -26,37 +26,57 @@ Route::post('uploadImage', [UploadImageController::class, 'uploadImage']);
 /*
     Request routes
 */
-Route::prefix('request')->middleware('jwt.verify')->group(function () {
-    Route::get('all', [RequestController::class, 'index']);
-    Route::get('get/{id}', [RequestController::class, 'show'])->where('id', '[0-9]+');
-    Route::post('create', [RequestController::class, 'store']);
-    Route::put('edit/{id}', [RequestController::class, 'update'])->where('id', '[0-9]+');
-    Route::put('changeStatus/{id}', [RequestController::class, 'updateStatusHR'])->where('id', '[0-9]+');
-    Route::put('complete/{id}', [RequestController::class, 'updateStatusManager'])->where('id', '[0-9]+');
-    Route::get('status', [RequestController::class, 'getStatus']);
-    Route::get('pdf', [RequestController::class, 'generatePDF']);
-});
+Route::prefix('request')->middleware('jwt.verify')->group(
+    function () {
+        Route::get('all', [RequestController::class, 'index']);
+        Route::get('get/{id}', [RequestController::class, 'show'])->where('id', '[0-9]+');
+        Route::post('create', [RequestController::class, 'store']);
+        Route::put('edit/{id}', [RequestController::class, 'update'])->where('id', '[0-9]+');
+        Route::put('changeStatus/{id}', [RequestController::class, 'updateStatusHR'])->where('id', '[0-9]+');
+        Route::put('complete/{id}', [RequestController::class, 'updateStatusManager'])->where('id', '[0-9]+');
+        Route::get('status', [RequestController::class, 'getStatus']);
+        Route::get('pdf', [RequestController::class, 'generatePDF']);
+    }
+);
 
 /*
     Get project subject pdf file
 */
-Route::get('projectFile', function () {
-    return response()->download(
-         storage_path("pdf/project.pdf"),
-        'project.pdf',
-        ['Content-Type' => 'application/pdf']
-    );
-});
+Route::get(
+    'projectFile', function () {
+        return response()->download(
+            storage_path("pdf/project.pdf"),
+            'project.pdf',
+            ['Content-Type' => 'application/pdf']
+        );
+    }
+);
 
 /*
     Reset the database for cypress js test
 */
-Route::get('resetDatabase', function () {
-    try {
-        Artisan::call('migrate:refresh');
+Route::get(
+    'resetDatabase', function () {
+        try {
+            Artisan::call('migrate:refresh');
 
-        return response()->json(['success' => true, 'message' => __('other.database_reset')]);
-    } catch (Exception $error) {
-        return response()->json(['success' => false, 'message' => $error->getMessage()]);
+            return response()->json(['success' => true, 'message' => __('other.database_reset')]);
+        } catch (Exception $error) {
+            return response()->json(['success' => false, 'message' => $error->getMessage()]);
+        }
     }
-});
+);
+
+/*
+    Fallback
+*/
+Route::fallback(
+    function () {
+        return response()->json(
+            [
+            'success' => false,
+            'message' => __('other.route_not_found')
+            ], 404
+        );
+    }
+);

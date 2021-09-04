@@ -82,11 +82,13 @@ class RequestController extends BaseController
             return $this->sendError(__('request.validation_error'), $validator->errors());
         }
 
-        return $this->sendResponse(
-            $this->requestService->create($user->id, $input['subject'], $input['description']),
-            __('request.created'),
-            201
-        );
+        try {
+            $requestEntity = $this->requestService->create($user->id, $input['subject'], $input['description']);
+        } catch (Exception $e) {
+            return $this->sendError(__('other.error'), [$e->getMessage()]);
+        }
+
+        return $this->sendResponse($requestEntity, __('request.created'), 201);
     }
 
     /**
@@ -113,10 +115,17 @@ class RequestController extends BaseController
             return $this->sendError(__('request.validation_error'), $validator->errors());
         }
 
-        return $this->sendResponse(
-            $this->requestService->update($requestEntity, $input['subject'], $input['description']),
-            __('request.updated')
-        );
+        try {
+            $requestEntityUpdated = $this->requestService->update(
+                $requestEntity,
+                $input['subject'],
+                $input['description']
+            );
+        } catch (Exception $e) {
+            return $this->sendError(__('other.error'), [$e->getMessage()]);
+        }
+
+        return $this->sendResponse($requestEntityUpdated, __('request.updated'));
     }
 
     /**
@@ -139,10 +148,13 @@ class RequestController extends BaseController
             return $this->sendError(__('request.wrong_status'));
         }
 
-        return $this->sendResponse(
-            $this->requestService->updateStatus($requestEntity, $user->id, $statusId),
-            __('request.updated')
-        );
+        try {
+            $requestEntityUpdated = $this->requestService->updateStatus($requestEntity, $user->id, $statusId);
+        } catch (Exception $e) {
+            return $this->sendError(__('other.error'), [$e->getMessage()]);
+        }
+
+        return $this->sendResponse($requestEntityUpdated, __('request.updated'));
     }
 
     /**
@@ -160,11 +172,15 @@ class RequestController extends BaseController
             return $this->sendError(__('request.wrong_permission'), [], 403);
         }
 
-        $requestEntityUpdated = $this->requestService->updateStatus(
-            $requestEntity,
-            $user->id,
-            RequestService::STATUS_PROCESSED
-        );
+        try {
+            $requestEntityUpdated = $this->requestService->updateStatus(
+                $requestEntity,
+                $user->id,
+                RequestService::STATUS_PROCESSED
+            );
+        } catch (Exception $e) {
+            return $this->sendError(__('other.error'), [$e->getMessage()]);
+        }
 
         return $this->sendResponse($requestEntityUpdated, __('request.updated'));
     }
@@ -192,7 +208,11 @@ class RequestController extends BaseController
             RequestEntity::orderBy('updated_at', 'DESC')->get()
         );
 
-        $pdf = PDF::loadView('request_pdf', ['requests' => $requestsCollection]);
+        try {
+            $pdf = PDF::loadView('request_pdf', ['requests' => $requestsCollection]);
+        } catch (Exception $e) {
+            return $this->sendError(__('other.error'), [$e->getMessage()]);
+        }
 
         return $pdf->output();
     }

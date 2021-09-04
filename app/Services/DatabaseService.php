@@ -32,6 +32,21 @@ class DatabaseService
     }
 
     /**
+     * @param $database
+     *
+     * @return bool
+     */
+    public function databaseExists($database): bool
+    {
+        $pdo = $this->getPDOConnection(env('DB_HOST'), env('DB_PORT'), env('DB_USERNAME'), env('DB_PASSWORD'));
+
+        $stmt = $pdo->prepare("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =:dbname");
+        $stmt->execute(array(":dbname"=>$database));
+
+        return $stmt->rowCount() == 1;
+    }
+
+    /**
      * @param string  $host
      * @param integer $port
      * @param string  $username

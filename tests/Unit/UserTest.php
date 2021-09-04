@@ -34,6 +34,7 @@ class UserTest extends TestCase
 
         $this->userService = new UserService();
 
+        $this->user = User::factory()->create(['role_id' => self::ROLE_USER]);
         $password = $this->faker->password;
 
         $this->dataTestRegister = [
@@ -78,10 +79,18 @@ class UserTest extends TestCase
     public function testRoleRelation()
     {
         $user = new User();
+        $user->name = 'Test';
         $user->role_id = self::ROLE_USER;
 
         $this->assertEquals(self::ROLE_USER, $user->role_id);
         $this->assertEquals(self::ROLE_USER, $user->role->id);
+
+        $role = new Role(['name' => 'Test']);
+        $role->save();
+        $this->user->role()->associate($role);
+        $this->user->save();
+
+        $this->assertEquals($this->user->id, $role->users()->first()->id);
     }
 
     /**
@@ -246,5 +255,39 @@ class UserTest extends TestCase
         );
 
         $this->assertTrue($validator->fails());
+    }
+
+    /**
+     * @test
+     */
+    public function testRequestsRelation()
+    {
+        $this->user->requests()->create(
+            [
+            'subject' => 'Test Subject',
+            'description' => 'Test Description',
+            ]
+        );
+
+        $this->assertTrue($this->user->requests()->count() > 0);
+        $this->assertEquals('Test Subject', $this->user->requests()->first()->subject);
+        $this->assertEquals('Test Description', $this->user->requests()->first()->description);
+    }
+
+    /**
+     * @test
+     */
+    public function testLogsRelation()
+    {
+        $this->user->logs()->create(
+            [
+            'request_id' => 1,
+            'message' => 'Test',
+            ]
+        );
+
+        $this->assertTrue($this->user->logs()->count() > 0);
+        $this->assertEquals(1, $this->user->logs()->first()->request->id);
+        $this->assertEquals('Test', $this->user->logs()->first()->message);
     }
 }

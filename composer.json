@@ -24,6 +24,7 @@
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.3.3",
+        "phpunit/php-code-coverage": "^9.2",
         "ext-json": "*"
     },
     "autoload": {
@@ -64,7 +65,6 @@
             "@composer update",
             "@php artisan db:drop",
             "@php artisan db:create",
-            "@php artisan migrate",
             "@php artisan db:create-test",
             "@php artisan key:generate",
             "@php artisan vendor:publish --provider=\"Tymon\\JWTAuth\\Providers\\LaravelServiceProvider\"",
@@ -72,6 +72,9 @@
         ],
         "phpunit": [
             "./vendor/bin/phpunit"
+        ],
+        "phpunit-coverage": [
+            "./vendor/bin/phpunit --coverage-html reports/"
         ]
     },
     "extra": {
@@ -84,7 +87,8 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "process-timeout": 0
     },
     "minimum-stability": "dev",
     "prefer-stable": true

@@ -62,10 +62,17 @@ class RequestTest extends TestCase
         $status = new RequestStatus();
         $status->name = 'test';
 
-        $request = new Request();
+        $request = new Request(['subject' => 'test', 'description' => 'test', 'user_id' => User::first()->id]);
         $request->status()->associate($status);
 
         $this->assertEquals($status->name, $request->status->name);
+
+        $status->description = 'test';
+        $status->save();
+        $request->status_id = $status->id;
+        $request->save();
+
+        $this->assertEquals($request->id, $status->requests()->first()->id);
     }
 
     /**
@@ -262,7 +269,7 @@ class RequestTest extends TestCase
     public function testValidationDataRequestTooLongSubject()
     {
         $dataTest = $this->dataTestRequest;
-        $dataTest['subject'] = $this->faker->sentence(40);
+        $dataTest['subject'] = $this->faker->sentence(100);
 
         $validator = $this->requestService->validateRequestData($dataTest);
 

@@ -145,6 +145,17 @@ class UserTest extends TestCase
     /**
      * @test
      */
+    public function tryToGetUserInformationWithInvalidToken()
+    {
+        $this->get(
+            'api/me',
+            ['authorization' => "bearer WrongToken"]
+        )->assertStatus(401);
+    }
+
+    /**
+     * @test
+     */
     public function updateUserName()
     {
         $name = $this->faker->name;
@@ -280,8 +291,18 @@ class UserTest extends TestCase
 
     /**
      * @test
+     *
+     * @throws Throwable
      */
-    public function uploadNewUserImage()
+    public function tryToGetRefreshTokenWithoutTokenAuthorization()
+    {
+        $this->get('api/me')->assertStatus(401);
+    }
+
+    /**
+     * @test
+     */
+    public function uploadNewUserImageAndSeeIfOldImageIsDeleted()
     {
         $image = UploadedFile::fake()->image('avatar.jpg');
 
@@ -295,8 +316,47 @@ class UserTest extends TestCase
 
         $this->assertStringContainsString('avatar.jpg', $imageUrl);
         $this->user->refresh();
-        $this->assertEquals(url('/images/' . $this->user->image_name), $imageUrl);
-        File::delete('images/' . $this->user->image_name);
+
+        $imageName = $this->user->image_name;
+        $this->assertEquals(url('/images/' . $imageName), $imageUrl);
+
+        // upload new image a second time
+        $this->post(
+            'api/uploadImage',
+            ['file' => $image],
+            ['authorization' => "bearer $this->token"]
+        )->assertStatus(200);
+
+        // check if old image has been deleted
+        $this->assertFalse(File::exists(public_path('images') . '/' . $imageName));
+        $this->user->refresh();
+
+        //delete image
+        File::delete(public_path('images') . '/' . $this->user->image_name);
+    }
+
+    /**
+     * @test
+     */
+    public function tryToUploadNewImageWithoutAuthentication()
+    {
+        $image = UploadedFile::fake()->image('avatar.jpg');
+
+        $this->post(
+            'api/uploadImage',
+            ['file' => $image],
+        )->assertStatus(404);
+    }
+
+    /**
+     * @test
+     */
+    public function tryToUploadNewImageWithoutFile()
+    {
+        $this->post(
+            'api/uploadImage',
+            ['file' => null],
+        )->assertStatus(404);
     }
 
     /**

@@ -25,6 +25,11 @@ class RequestTest extends TestCase
     private const STATUS_OPEN = RequestService::STATUS_OPEN;
     private const STATUS_PROCESSED = RequestService::STATUS_PROCESSED;
     private const STATUS_HR_REVIEWED = RequestService::STATUS_HR_REVIEWED;
+    private const STATUS = [
+        self::STATUS_OPEN,
+        self::STATUS_PROCESSED,
+        self::STATUS_HR_REVIEWED
+    ];
 
     private $token_user;
     private $token_hr;
@@ -91,6 +96,30 @@ class RequestTest extends TestCase
         );
 
         $this->assertEquals(self::STATUS_OPEN, $request['status']['id']);
+    }
+
+    /**
+     * @test
+     */
+    public function tryToCreateRequestAsHrStaff()
+    {
+        $this->post(
+            'api/request/create',
+            $this->dataRequest,
+            ['authorization' => "bearer $this->token_hr"]
+        )->assertStatus(403);
+    }
+
+    /**
+     * @test
+     */
+    public function tryToCreateRequestAsManager()
+    {
+        $this->post(
+            'api/request/create',
+            $this->dataRequest,
+            ['authorization' => "bearer $this->token_manager"]
+        )->assertStatus(403);
     }
 
     /**
@@ -195,6 +224,20 @@ class RequestTest extends TestCase
     /**
      * @test
      */
+    public function tryToUpdateRequestWithoutData()
+    {
+        $creatorToken = JWTAuth::fromUser(User::find($this->request->user_id));
+
+        $this->put(
+            'api/request/edit/' . $this->request->id,
+            [],
+            ['authorization' => "bearer $creatorToken"]
+        )->assertStatus(404);
+    }
+
+    /**
+     * @test
+     */
     public function tryToUpdateRequestAsOtherUser()
     {
         $this->put(
@@ -261,15 +304,17 @@ class RequestTest extends TestCase
      */
     public function changeRequestStatusAsHrStaff()
     {
-        $requestStatusId = json_decode(
-            $this->put(
-                'api/request/changeStatus/' . $this->request->id,
-                ['status_id' => self::STATUS_HR_REVIEWED],
-                ['authorization' => "bearer $this->token_hr"]
-            )->assertStatus(200)->getContent(), true
-        )['data']['status']['id'];
+        foreach (self::STATUS as $statusId) {
+            $requestStatusId = json_decode(
+                $this->put(
+                    'api/request/changeStatus/' . $this->request->id,
+                    ['status_id' => $statusId],
+                    ['authorization' => "bearer $this->token_hr"]
+                )->assertStatus(200)->getContent(), true
+            )['data']['status']['id'];
 
-        $this->assertEquals(self::STATUS_HR_REVIEWED, $requestStatusId);
+            $this->assertEquals($statusId, $requestStatusId);
+        }
     }
 
     /**

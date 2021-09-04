@@ -3,39 +3,37 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Throwable;
 
+/**
+ * Class Handler
+ *
+ * @package App\Exceptions
+ */
 class Handler extends ExceptionHandler
 {
     /**
-     * A list of the exception types that are not reported.
+     * Render an exception into an HTTP response.
      *
-     * @var array
-     */
-    protected $dontReport = [
-        //
-    ];
-
-    /**
-     * A list of the inputs that are never flashed for validation exceptions.
+     * @param $request
+     * @param Throwable $e
      *
-     * @var array
+     * @return JsonResponse
+     * @throws Throwable
      */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     *
-     * @return void
-     */
-    public function register()
+    public function render($request, Throwable $e): JsonResponse
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
+        if ($e instanceof ModelNotFoundException) {
+            return response()->json(
+                [
+                'success' => false,
+                'message' => str_replace('App\\Models\\', '', $e->getModel()) . __('other.not_found'),
+                ], 404
+            );
+        }
+
+        return parent::render($request, $e);
     }
 }

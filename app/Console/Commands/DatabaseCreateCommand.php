@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\DatabaseService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use PDOException;
 
 /**
@@ -48,6 +49,8 @@ class DatabaseCreateCommand extends Command
 
         try {
             (new DatabaseService())->createDatabase($database);
+
+            Artisan::call("migrate");
 
             $this->info(sprintf('Successfully created %s database', $database));
         } catch (PDOException $exception) {

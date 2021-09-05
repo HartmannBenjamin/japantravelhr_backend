@@ -32,12 +32,12 @@ class RequestTest extends TestCase
         parent::setUp();
 
         $this->requestService = new RequestService();
-        $this->withoutExceptionHandling();
-
         $this->dataTestRequest = [
             'subject' => $this->faker->sentence,
             'description' => $this->faker->sentence(20),
         ];
+
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -246,21 +246,21 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function testValidationDataRequestWithoutData()
-    {
-        $validator = $this->requestService->validateRequestData([]);
-
-        $this->assertTrue($validator->fails());
-    }
-
-    /**
-     * @test
-     */
     public function testValidationDataRequest()
     {
         $validator = $this->requestService->validateRequestData($this->dataTestRequest);
 
         $this->assertNotTrue($validator->fails());
+    }
+
+    /**
+     * @test
+     */
+    public function testValidationDataRequestWithoutData()
+    {
+        $validator = $this->requestService->validateRequestData([]);
+
+        $this->assertTrue($validator->fails());
     }
 
     /**

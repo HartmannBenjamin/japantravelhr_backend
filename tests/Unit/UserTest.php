@@ -17,10 +17,6 @@ class UserTest extends TestCase
 {
     use WithFaker;
 
-    private const ROLE_USER = 1;
-    private const ROLE_HR = 2;
-    private const ROLE_MANAGER = 3;
-
     private $userService;
 
     private $user;
@@ -34,7 +30,7 @@ class UserTest extends TestCase
 
         $this->userService = new UserService();
 
-        $this->user = User::factory()->create(['role_id' => self::ROLE_USER]);
+        $this->user = User::factory()->create(['role_id' => UserService::ROLE_USER]);
         $password = $this->faker->password;
 
         $this->dataTestRegister = [
@@ -65,11 +61,11 @@ class UserTest extends TestCase
     {
         $user = new User();
 
-        $user->role_id = self::ROLE_USER;
+        $user->role_id = UserService::ROLE_USER;
         $this->assertTrue($user->isUser());
-        $user->role_id = self::ROLE_HR;
+        $user->role_id = UserService::ROLE_HR;
         $this->assertTrue($user->isHR());
-        $user->role_id = self::ROLE_MANAGER;
+        $user->role_id = UserService::ROLE_MANAGER;
         $this->assertTrue($user->isManager());
     }
 
@@ -80,10 +76,10 @@ class UserTest extends TestCase
     {
         $user = new User();
         $user->name = 'Test';
-        $user->role_id = self::ROLE_USER;
+        $user->role_id = UserService::ROLE_USER;
 
-        $this->assertEquals(self::ROLE_USER, $user->role_id);
-        $this->assertEquals(self::ROLE_USER, $user->role->id);
+        $this->assertEquals(UserService::ROLE_USER, $user->role_id);
+        $this->assertEquals(UserService::ROLE_USER, $user->role->id);
 
         $role = new Role(['name' => 'Test']);
         $role->save();
@@ -91,6 +87,23 @@ class UserTest extends TestCase
         $this->user->save();
 
         $this->assertEquals($this->user->id, $role->users()->first()->id);
+    }
+
+    /**
+     * @test
+     */
+    public function testRequestsRelation()
+    {
+        $this->user->requests()->create(
+            [
+                'subject' => 'Test Subject',
+                'description' => 'Test Description',
+            ]
+        );
+
+        $this->assertTrue($this->user->requests()->count() > 0);
+        $this->assertEquals('Test Subject', $this->user->requests()->first()->subject);
+        $this->assertEquals('Test Description', $this->user->requests()->first()->description);
     }
 
     /**
@@ -104,7 +117,7 @@ class UserTest extends TestCase
         $user->name = 'nameTest';
         $user->email = $email;
         $user->image_name = 'testImage';
-        $user->role_id = self::ROLE_USER;
+        $user->role_id = UserService::ROLE_USER;
         $user->password = bcrypt('testPassword');
         $user->save();
 
@@ -113,7 +126,7 @@ class UserTest extends TestCase
         $this->assertEquals('nameTest', $resource['name']);
         $this->assertEquals($email, $resource['email']);
         $this->assertEquals(url('/images/testImage'), $resource['image_url']);
-        $this->assertEquals(self::ROLE_USER, $resource['role']['id']);
+        $this->assertEquals(UserService::ROLE_USER, $resource['role']['id']);
     }
 
     /**
@@ -255,23 +268,6 @@ class UserTest extends TestCase
         );
 
         $this->assertTrue($validator->fails());
-    }
-
-    /**
-     * @test
-     */
-    public function testRequestsRelation()
-    {
-        $this->user->requests()->create(
-            [
-            'subject' => 'Test Subject',
-            'description' => 'Test Description',
-            ]
-        );
-
-        $this->assertTrue($this->user->requests()->count() > 0);
-        $this->assertEquals('Test Subject', $this->user->requests()->first()->subject);
-        $this->assertEquals('Test Description', $this->user->requests()->first()->description);
     }
 
     /**

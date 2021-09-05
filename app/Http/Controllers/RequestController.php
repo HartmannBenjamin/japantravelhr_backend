@@ -20,6 +20,8 @@ use App\Http\Resources\Status as RequestStatusResource;
 class RequestController extends BaseController
 {
     /**
+     * Here's the request service
+     *
      * @var RequestService $requestService
      */
     protected $requestService;
@@ -35,6 +37,8 @@ class RequestController extends BaseController
     }
 
     /**
+     * Get all the requests (depending on user role)
+     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -45,6 +49,8 @@ class RequestController extends BaseController
     }
 
     /**
+     * Get a specific request by id
+     *
      * @param int     $id
      * @param Request $request
      *
@@ -53,7 +59,7 @@ class RequestController extends BaseController
     public function show(int $id, Request $request): JsonResponse
     {
         $requestEntity = RequestEntity::findOrFail($id);
-        $user = $request->user();
+        $user          = $request->user();
 
         if ($user->isUser() && $user->id != $requestEntity->user_id) {
             return $this->sendError(__('request.no_access'), [], 403);
@@ -63,13 +69,15 @@ class RequestController extends BaseController
     }
 
     /**
+     * Create a new request
+     *
      * @param Request $request
      *
      * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
     {
-        $user = $request->user();
+        $user  = $request->user();
         $input = $request->all();
 
         if (!$user->isUser()) {
@@ -92,6 +100,8 @@ class RequestController extends BaseController
     }
 
     /**
+     * Update request information
+     *
      * @param int     $id
      * @param Request $request
      *
@@ -100,8 +110,8 @@ class RequestController extends BaseController
     public function update(int $id, Request $request): JsonResponse
     {
         $requestEntity = RequestEntity::findOrFail($id);
-        $user = $request->user();
-        $input = $request->all();
+        $user          = $request->user();
+        $input         = $request->all();
 
         if (!$user->isUser() || $requestEntity->status_id != RequestService::STATUS_OPEN
             || $user->id != $requestEntity->user_id
@@ -129,6 +139,8 @@ class RequestController extends BaseController
     }
 
     /**
+     * Update request status as Hr Staff
+     *
      * @param int     $id
      * @param Request $request
      *
@@ -137,8 +149,8 @@ class RequestController extends BaseController
     public function updateStatusHR(int $id, Request $request): JsonResponse
     {
         $requestEntity = RequestEntity::findOrFail($id);
-        $statusId = $request->get('status_id');
-        $user = $request->user();
+        $statusId      = $request->get('status_id');
+        $user          = $request->user();
 
         if (!$user->isHR()) {
             return $this->sendError(__('request.wrong_permission'), [], 403);
@@ -158,6 +170,8 @@ class RequestController extends BaseController
     }
 
     /**
+     * Update request status as manager
+     *
      * @param int     $id
      * @param Request $request
      *
@@ -166,7 +180,7 @@ class RequestController extends BaseController
     public function updateStatusManager(int $id, Request $request): JsonResponse
     {
         $requestEntity = RequestEntity::findOrFail($id);
-        $user = $request->user();
+        $user          = $request->user();
 
         if ($requestEntity->status_id != RequestService::STATUS_HR_REVIEWED || !$user->isManager()) {
             return $this->sendError(__('request.wrong_permission'), [], 403);
@@ -186,6 +200,8 @@ class RequestController extends BaseController
     }
 
     /**
+     * Get all statuses in the database
+     *
      * @return JsonResponse
      */
     public function getStatus(): JsonResponse
@@ -194,6 +210,8 @@ class RequestController extends BaseController
     }
 
     /**
+     * Generate pdf file of all requests
+     *
      * @param Request $request
      *
      * @return JsonResponse|string

@@ -16,16 +16,18 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  */
 class RequestService
 {
-    public const STATUS_OPEN = 1;
+    public const STATUS_OPEN        = 1;
     public const STATUS_HR_REVIEWED = 2;
-    public const STATUS_PROCESSED = 3;
-    public const ALL_STATUS = [
+    public const STATUS_PROCESSED   = 3;
+    public const ALL_STATUS         = [
         self::STATUS_OPEN,
         self::STATUS_PROCESSED,
         self::STATUS_HR_REVIEWED
     ];
 
     /**
+     * Get all requests in the database (depending on user role)
+     *
      * @param User $user
      *
      * @return AnonymousResourceCollection
@@ -48,6 +50,8 @@ class RequestService
     }
 
     /**
+     * Store a new request in the database
+     *
      * @param int    $userId
      * @param string $subject
      * @param string $description
@@ -56,16 +60,16 @@ class RequestService
      */
     public function create(int $userId, string $subject, string $description): RequestResource
     {
-        $requestEntity = new RequestEntity();
-        $requestEntity->subject = $subject;
+        $requestEntity              = new RequestEntity();
+        $requestEntity->subject     = $subject;
         $requestEntity->description = $description;
-        $requestEntity->user_id = $userId;
-        $requestEntity->status_id = self::STATUS_OPEN;
+        $requestEntity->user_id     = $userId;
+        $requestEntity->status_id   = self::STATUS_OPEN;
         $requestEntity->save();
 
-        $requestLog = new RequestLog();
-        $requestLog->message = __('request.log_created');
-        $requestLog->user_id = $userId;
+        $requestLog             = new RequestLog();
+        $requestLog->message    = __('request.log_created');
+        $requestLog->user_id    = $userId;
         $requestLog->request_id = $requestEntity->id;
         $requestLog->save();
 
@@ -73,6 +77,8 @@ class RequestService
     }
 
     /**
+     * Update information of a specific request
+     *
      * @param RequestEntity $requestEntity
      * @param string        $subject
      * @param string        $description
@@ -84,13 +90,13 @@ class RequestService
         string $subject,
         string $description
     ): RequestResource {
-        $requestEntity->subject = $subject;
+        $requestEntity->subject     = $subject;
         $requestEntity->description = $description;
         $requestEntity->save();
 
-        $requestLog = new RequestLog();
-        $requestLog->message = __('request.log_updated');
-        $requestLog->user_id = $requestEntity->user_id;
+        $requestLog             = new RequestLog();
+        $requestLog->message    = __('request.log_updated');
+        $requestLog->user_id    = $requestEntity->user_id;
         $requestLog->request_id = $requestEntity->id;
         $requestLog->save();
 
@@ -98,6 +104,8 @@ class RequestService
     }
 
     /**
+     * Update the status of a specific request
+     *
      * @param RequestEntity $requestEntity
      * @param int           $userId
      * @param int           $statusId
@@ -109,9 +117,9 @@ class RequestService
         $requestEntity->status_id = $statusId;
         $requestEntity->save();
 
-        $requestLog = new RequestLog();
-        $requestLog->message = __('request.log_status_updated') . $this->getNameStatus($statusId);
-        $requestLog->user_id = $userId;
+        $requestLog             = new RequestLog();
+        $requestLog->message    = __('request.log_status_updated') . $this->getNameStatus($statusId);
+        $requestLog->user_id    = $userId;
         $requestLog->request_id = $requestEntity->id;
         $requestLog->save();
 
@@ -119,6 +127,8 @@ class RequestService
     }
 
     /**
+     * Get name of status id
+     *
      * @param int $statusId
      *
      * @return string
@@ -126,9 +136,9 @@ class RequestService
     private function getNameStatus(int $statusId): string
     {
         switch ($statusId) {
-        case self::STATUS_OPEN:
+            case self::STATUS_OPEN:
             return __('request.status_open');
-        case self::STATUS_PROCESSED:
+            case self::STATUS_PROCESSED:
             return __('request.status_processed');
         }
 
@@ -136,6 +146,8 @@ class RequestService
     }
 
     /**
+     * Validation of request data
+     *
      * @param $input
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator

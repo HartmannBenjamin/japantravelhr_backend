@@ -17,6 +17,7 @@ yarn-error.log
 !/public/images/test.png
 /.phpstorm.meta.php
 /_ide_helper.php
+/_ide_helper_models.php
 /app/Exceptions/Handler.php
 /package-lock.json
 /composer.lock

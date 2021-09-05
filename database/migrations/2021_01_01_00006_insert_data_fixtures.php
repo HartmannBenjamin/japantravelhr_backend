@@ -62,7 +62,7 @@ class InsertDataFixtures extends Migration
         DB::table('requests_status')->insert(
             [
                 'name' => 'Open',
-                'description' => 'The request is waiting for an HR staff to review it.'
+                'description' => 'The request is waiting for member of HR staff to review it.'
             ]
         );
         DB::table('requests_status')->insert(
@@ -109,9 +109,9 @@ class InsertDataFixtures extends Migration
          */
         DB::table('requests_logs')->insert(
             [
-            'message' => 'Request created by user',
-            'request_id' => 1,
-            'user_id' => 1,
+                'message' => 'Request created by user',
+                'request_id' => 1,
+                'user_id' => 1,
             ]
         );
         DB::table('requests_logs')->insert(

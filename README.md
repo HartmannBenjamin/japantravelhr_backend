@@ -54,11 +54,7 @@ Manager :
 
 ## ➤ Launch tests
 ```
-// launch tests
 php artisan test
-
-// launch tests with coverage report
-composer run phpunit-coverage
 ```
 
 ## ➤ Links

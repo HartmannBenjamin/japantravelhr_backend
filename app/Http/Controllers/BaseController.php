@@ -13,7 +13,7 @@ use App\Http\Controllers\Controller as Controller;
 class BaseController extends Controller
 {
     /**
-     * success response method.
+     * Success response method
      *
      * @param array  $result
      * @param string $message
@@ -33,7 +33,7 @@ class BaseController extends Controller
     }
 
     /**
-     * success token response method.
+     * Success token response method
      *
      * @param string $token
      *
@@ -45,7 +45,7 @@ class BaseController extends Controller
     }
 
     /**
-     * return error response.
+     * Return error response
      *
      * @param $error
      * @param array $errorMessages

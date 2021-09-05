@@ -28,9 +28,10 @@ class Handler extends ExceptionHandler
         if ($e instanceof ModelNotFoundException) {
             return response()->json(
                 [
-                'success' => false,
-                'message' => str_replace('App\\Models\\', '', $e->getModel()) . __('other.not_found'),
-                ], 404
+                    'success' => false,
+                    'message' => str_replace('App\\Models\\', '', $e->getModel()) . __('other.not_found'),
+                ],
+                404
             );
         }
 

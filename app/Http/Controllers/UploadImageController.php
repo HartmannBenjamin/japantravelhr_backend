@@ -15,6 +15,8 @@ use Illuminate\Validation\ValidationException;
 class UploadImageController extends BaseController
 {
     /**
+     * Here's the user service
+     *
      * @var UserService $userService
      */
     protected $userService;
@@ -30,6 +32,8 @@ class UploadImageController extends BaseController
     }
 
     /**
+     * Upload new image for user
+     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -38,10 +42,6 @@ class UploadImageController extends BaseController
     public function uploadImage(Request $request): JsonResponse
     {
         $user = $request->user();
-
-        if (!$user) {
-            return $this->sendError(__('auth.invalid_token'));
-        }
 
         $this->validate(
             $request,

@@ -50,7 +50,7 @@ class DatabaseCreateCommand extends Command
         try {
             (new DatabaseService())->createDatabase($database);
 
-            Artisan::call("migrate");
+            Artisan::call('migrate');
 
             $this->info(sprintf('Successfully created %s database', $database));
         } catch (PDOException $exception) {

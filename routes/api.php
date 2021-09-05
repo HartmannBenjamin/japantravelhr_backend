@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Http\Controllers\AuthController;
@@ -21,7 +22,7 @@ Route::put('update', [AuthController::class, 'update']);
 /*
     Upload User Image
 */
-Route::post('uploadImage', [UploadImageController::class, 'uploadImage']);
+Route::post('uploadImage', [UploadImageController::class, 'uploadImage'])->middleware('jwt.verify');
 
 /*
     Request routes
@@ -43,7 +44,8 @@ Route::prefix('request')->middleware('jwt.verify')->group(
     Get project subject pdf file
 */
 Route::get(
-    'projectFile', function () {
+    'projectFile',
+    function () {
         return response()->download(
             storage_path("pdf/project.pdf"),
             'project.pdf',
@@ -53,10 +55,11 @@ Route::get(
 );
 
 /*
-    Reset the database for cypress js test
+    Reset the database for cypress js tests
 */
 Route::get(
-    'resetDatabase', function () {
+    'resetDatabase',
+    function () {
         try {
             Artisan::call('migrate:refresh');
 
@@ -74,9 +77,10 @@ Route::fallback(
     function () {
         return response()->json(
             [
-            'success' => false,
-            'message' => __('other.route_not_found')
-            ], 404
+                'success' => false,
+                'message' => __('other.route_not_found')
+            ],
+            404
         );
     }
 );

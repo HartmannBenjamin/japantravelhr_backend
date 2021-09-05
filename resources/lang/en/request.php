@@ -8,7 +8,7 @@ return [
     'updated' => 'Request updated successfully.',
     'wrong_status' => 'Wrong status provided',
     'validation_error' => 'Validation error.',
-    'status' => 'Here\'s all the request status.',
+    'status' => 'Here\'s all the request statuses.',
     'log_created' => 'Request created by user',
     'log_updated' => 'Request updated by user',
     'log_status_updated' => 'Request status updated to ',

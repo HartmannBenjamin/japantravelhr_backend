@@ -19,7 +19,7 @@ class JwtMiddleware extends BaseMiddleware
 {
 
     /**
-     * JWT Middleware.
+     * JWT Middleware
      *
      * @param Request $request
      * @param Closure $next

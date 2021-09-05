@@ -3,6 +3,7 @@
 namespace Tests\Integration;
 
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\UploadedFile;
@@ -19,10 +20,6 @@ class UserTest extends TestCase
 {
     use WithFaker;
 
-    private const ROLE_USER = 1;
-    private const ROLE_HR = 2;
-    private const ROLE_MANAGER = 3;
-
     private $user;
     private $token;
     private $password;
@@ -31,7 +28,7 @@ class UserTest extends TestCase
         'email' => 'test@mail.fr',
         'password' => 'test',
         'c_password' => 'test',
-        'role_id' => self::ROLE_MANAGER,
+        'role_id' => UserService::ROLE_MANAGER,
     ];
 
     protected function setUp(): void
@@ -39,27 +36,11 @@ class UserTest extends TestCase
         parent::setUp();
 
         $password = 'testPHPUNIT';
-        $this->user = User::factory()->create(['role_id' => self::ROLE_USER, 'password' => bcrypt($password)]);
+        $this->user = User::factory()->create(['role_id' => UserService::ROLE_USER, 'password' => bcrypt($password)]);
         $this->token = JWTAuth::fromUser($this->user);
         $this->password = $password;
 
         $this->withoutExceptionHandling();
-    }
-
-    /**
-     * @test
-     */
-    public function registerAnUserWithWrongPasswordData()
-    {
-        $attributes = [
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
-            'password' => 'test',
-            'c_password' => 'not_same',
-            'role_id' => self::ROLE_MANAGER,
-        ];
-
-        $this->post('api/register', $attributes)->assertStatus(422);
     }
 
     /**
@@ -85,6 +66,22 @@ class UserTest extends TestCase
 
         $this->post('api/login', ['email' => $newUser['email'], 'password' => $password])
             ->assertStatus(200);
+    }
+
+    /**
+     * @test
+     */
+    public function registerAnUserWithWrongPasswordData()
+    {
+        $attributes = [
+            'name' => $this->faker->name,
+            'email' => $this->faker->email,
+            'password' => 'test',
+            'c_password' => 'not_same',
+            'role_id' => UserService::ROLE_MANAGER,
+        ];
+
+        $this->post('api/register', $attributes)->assertStatus(422);
     }
 
     /**
@@ -345,7 +342,7 @@ class UserTest extends TestCase
         $this->post(
             'api/uploadImage',
             ['file' => $image],
-        )->assertStatus(404);
+        )->assertStatus(401);
     }
 
     /**
@@ -356,7 +353,7 @@ class UserTest extends TestCase
         $this->post(
             'api/uploadImage',
             ['file' => null],
-        )->assertStatus(404);
+        )->assertStatus(401);
     }
 
     /**

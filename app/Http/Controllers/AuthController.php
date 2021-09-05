@@ -21,6 +21,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class AuthController extends BaseController
 {
     /**
+     * Here's the user service
+     *
      * @var UserService $userService
      */
     protected $userService;
@@ -37,13 +39,15 @@ class AuthController extends BaseController
     }
 
     /**
+     * User sign up function
+     *
      * @param Request $request
      *
      * @return JsonResponse
      */
     public function register(Request $request): JsonResponse
     {
-        $input = $request->all();
+        $input     = $request->all();
         $validator = $this->userService->validateRegisterData($input);
 
         if ($validator->fails()) {
@@ -57,7 +61,7 @@ class AuthController extends BaseController
         $input['password'] = bcrypt($input['password']);
 
         try {
-            $user = User::create($input);
+            $user          = User::create($input);
             $user->role_id = $input['role_id'];
             $user->save();
         } catch (Exception $e) {
@@ -72,6 +76,8 @@ class AuthController extends BaseController
     }
 
     /**
+     * Login user function
+     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -79,7 +85,7 @@ class AuthController extends BaseController
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->only('email', 'password');
-        $validator = $this->userService->validateLoginData($credentials);
+        $validator   = $this->userService->validateLoginData($credentials);
 
         if ($validator->fails()) {
             return $this->sendError(__('auth.wrong_data'), $validator->errors(), 422);
@@ -93,9 +99,9 @@ class AuthController extends BaseController
     }
 
     /**
-     * @return JsonResponse
+     * Get new token for user
      *
-     * @throws JWTException
+     * @return JsonResponse
      */
     public function refreshToken(): JsonResponse
     {
@@ -107,6 +113,8 @@ class AuthController extends BaseController
     }
 
     /**
+     * Get user information
+     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -125,6 +133,8 @@ class AuthController extends BaseController
     }
 
     /**
+     * Check if email is available in database
+     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -132,7 +142,7 @@ class AuthController extends BaseController
     public function emailAvailable(Request $request): JsonResponse
     {
         $isAvailable = true;
-        $email = $request->get('email');
+        $email       = $request->get('email');
 
         if (User::where('email', '=', $email)->exists()) {
             $isAvailable = false;
@@ -145,6 +155,8 @@ class AuthController extends BaseController
     }
 
     /**
+     * Recover all roles in database
+     *
      * @return JsonResponse
      */
     public function getRoles(): JsonResponse
@@ -153,13 +165,15 @@ class AuthController extends BaseController
     }
 
     /**
+     * Update user information
+     *
      * @param Request $request
      *
      * @return JsonResponse
      */
     public function update(Request $request): JsonResponse
     {
-        $user = auth()->user();
+        $user  = auth()->user();
         $input = $request->all();
 
         if ($input['name'] == null || $input['name'] == '') {

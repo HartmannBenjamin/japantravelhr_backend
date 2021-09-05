@@ -24,9 +24,10 @@ class DatabaseTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->withoutExceptionHandling();
 
         $this->databaseService = new DatabaseService();
+
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -52,7 +53,7 @@ class DatabaseTest extends TestCase
     {
         Artisan::call('db:drop');
 
-        $database = env('DB_DATABASE', false);
+        $database       = env('DB_DATABASE', false);
         $databaseExists = $this->databaseService->databaseExists($database);
         $this->assertFalse($databaseExists);
     }
@@ -64,21 +65,7 @@ class DatabaseTest extends TestCase
     {
         Artisan::call('db:create');
 
-        $database = env('DB_DATABASE', false);
-        $databaseExists = $this->databaseService->databaseExists($database);
-        $this->assertTrue($databaseExists);
-
-
-    }
-
-    /**
-     * @test
-     */
-    public function testCreateDatabaseTestArtisanCommand()
-    {
-        Artisan::call('db:create-test');
-
-        $database = env('DB_DATABASE', false) . '_test';
+        $database       = env('DB_DATABASE', false);
         $databaseExists = $this->databaseService->databaseExists($database);
         $this->assertTrue($databaseExists);
     }

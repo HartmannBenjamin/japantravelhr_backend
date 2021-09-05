@@ -5,6 +5,7 @@ namespace Tests\Integration;
 use App\Models\Request;
 use App\Models\User;
 use App\Services\RequestService;
+use App\Services\UserService;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -17,19 +18,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class RequestTest extends TestCase
 {
     use WithFaker;
-
-    private const ROLE_USER = 1;
-    private const ROLE_HR = 2;
-    private const ROLE_MANAGER = 3;
-
-    private const STATUS_OPEN = RequestService::STATUS_OPEN;
-    private const STATUS_PROCESSED = RequestService::STATUS_PROCESSED;
-    private const STATUS_HR_REVIEWED = RequestService::STATUS_HR_REVIEWED;
-    private const STATUS = [
-        self::STATUS_OPEN,
-        self::STATUS_PROCESSED,
-        self::STATUS_HR_REVIEWED
-    ];
 
     private $token_user;
     private $token_hr;
@@ -45,16 +33,16 @@ class RequestTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create(['role_id' => self::ROLE_USER]);
+        $this->user = User::factory()->create(['role_id' => UserService::ROLE_USER]);
         $this->token_user = JWTAuth::fromUser($this->user);
 
-        $hr = User::factory()->create(['role_id' => self::ROLE_HR]);
+        $hr = User::factory()->create(['role_id' => UserService::ROLE_HR]);
         $this->token_hr = JWTAuth::fromUser($hr);
 
-        $manager = User::factory()->create(['role_id' => self::ROLE_MANAGER]);
+        $manager = User::factory()->create(['role_id' => UserService::ROLE_MANAGER]);
         $this->token_manager = JWTAuth::fromUser($manager);
 
-        $this->request = Request::factory()->create(['status_id' => self::STATUS_OPEN]);
+        $this->request = Request::factory()->create(['status_id' => RequestService::STATUS_OPEN]);
 
         $this->withoutExceptionHandling();
     }
@@ -65,15 +53,6 @@ class RequestTest extends TestCase
     public function request_all()
     {
         $this->get('api/request/all', ['authorization' => "bearer $this->token_user"])->assertStatus(200);
-    }
-
-    /**
-     * @test
-     */
-    public function createRequestWithoutData()
-    {
-        $this->post('api/request/create', [], ['authorization' => "bearer $this->token_user"])
-            ->assertStatus(404);
     }
 
     /**
@@ -95,7 +74,16 @@ class RequestTest extends TestCase
             [$request['subject'], $request['description']]
         );
 
-        $this->assertEquals(self::STATUS_OPEN, $request['status']['id']);
+        $this->assertEquals(RequestService::STATUS_OPEN, $request['status']['id']);
+    }
+
+    /**
+     * @test
+     */
+    public function tryToCreateRequestWithoutData()
+    {
+        $this->post('api/request/create', [], ['authorization' => "bearer $this->token_user"])
+            ->assertStatus(404);
     }
 
     /**
@@ -276,7 +264,10 @@ class RequestTest extends TestCase
      */
     public function tryToUpdateProcessedRequest()
     {
-        $request = Request::factory()->create(['user_id' => $this->user->id, 'status_id' => self::STATUS_PROCESSED]);
+        $request = Request::factory()->create([
+            'user_id' => $this->user->id,
+            'status_id' => RequestService::STATUS_PROCESSED
+        ]);
 
         $this->put(
             'api/request/edit/' . $request->id,
@@ -290,7 +281,10 @@ class RequestTest extends TestCase
      */
     public function tryToUpdateHrReviewedRequest()
     {
-        $request = Request::factory()->create(['user_id' => $this->user->id, 'status_id' => self::STATUS_HR_REVIEWED]);
+        $request = Request::factory()->create([
+            'user_id' => $this->user->id,
+            'status_id' => RequestService::STATUS_HR_REVIEWED
+        ]);
 
         $this->put(
             'api/request/edit/' . $request->id,
@@ -304,7 +298,7 @@ class RequestTest extends TestCase
      */
     public function changeRequestStatusAsHrStaff()
     {
-        foreach (self::STATUS as $statusId) {
+        foreach (RequestService::ALL_STATUS as $statusId) {
             $requestStatusId = json_decode(
                 $this->put(
                     'api/request/changeStatus/' . $this->request->id,
@@ -336,7 +330,7 @@ class RequestTest extends TestCase
     {
         $this->put(
             'api/request/changeStatus/' . $this->request->id,
-            ['status_id' => self::STATUS_PROCESSED],
+            ['status_id' => RequestService::STATUS_PROCESSED],
             ['authorization' => "bearer $this->token_user"]
         )->assertStatus(403);
     }
@@ -348,7 +342,7 @@ class RequestTest extends TestCase
     {
         $this->put(
             'api/request/changeStatus/' . $this->request->id,
-            ['status_id' => self::STATUS_PROCESSED],
+            ['status_id' => RequestService::STATUS_PROCESSED],
             ['authorization' => "bearer $this->token_manager"]
         )->assertStatus(403);
     }
@@ -359,7 +353,7 @@ class RequestTest extends TestCase
     public function completeRequestAsManager()
     {
         // update request status
-        $this->request->status_id = self::STATUS_HR_REVIEWED;
+        $this->request->status_id = RequestService::STATUS_HR_REVIEWED;
         $this->request->save();
 
         $requestStatusId = json_decode(
@@ -370,8 +364,8 @@ class RequestTest extends TestCase
             )->assertStatus(200)->getContent(), true
         )['data']['status']['id'];
 
-        $this->assertEquals(self::STATUS_PROCESSED, $requestStatusId);
-        $this->assertNotEquals(self::STATUS_HR_REVIEWED, $requestStatusId);
+        $this->assertEquals(RequestService::STATUS_PROCESSED, $requestStatusId);
+        $this->assertNotEquals(RequestService::STATUS_HR_REVIEWED, $requestStatusId);
     }
 
     /**

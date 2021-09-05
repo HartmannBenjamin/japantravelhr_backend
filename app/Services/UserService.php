@@ -16,7 +16,13 @@ use Intervention\Image\ImageManagerStatic as Image;
  */
 class UserService
 {
+    public const ROLE_USER    = 1;
+    public const ROLE_HR      = 2;
+    public const ROLE_MANAGER = 3;
+
     /**
+     * Upload new user profile image
+     *
      * @param $file
      * @param $user
      *
@@ -24,7 +30,7 @@ class UserService
      */
     public function uploadUserImage(UploadedFile $file, User $user): UserResource
     {
-        $imageName = time() . '_' . $file->getClientOriginalName();
+        $imageName   = time() . '_' . $file->getClientOriginalName();
         $imageResize = Image::make($file->getRealPath());
         $imageResize->resize(300, 300);
 
@@ -41,6 +47,8 @@ class UserService
     }
 
     /**
+     * Validation of sign up data
+     *
      * @param array $input
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
@@ -60,6 +68,8 @@ class UserService
     }
 
     /**
+     * Validation of sign in data
+     *
      * @param array $credentials
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
@@ -76,6 +86,8 @@ class UserService
     }
 
     /**
+     * Validation of change password Data
+     *
      * @param array $input
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator

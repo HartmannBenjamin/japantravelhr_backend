@@ -4,6 +4,11 @@
 
 # JapanTravelHR Back-end API (Laravel)
 
+Requirements: 
+- PHP 
+- Composer  
+- Uncomment `;extension=fileinfo`, `;extension=pdo_mysql` and `;extension=gd` lines in php.ini
+
 ## ➤ Database setup
 - Install a sql relational database management system (ex mysql, mariadb, ...).
 
@@ -52,7 +57,7 @@ Manager :
     - password: 1234
 ```
 
-## ➤ Launch tests
+## ➤ Run tests
 ```
 php artisan test
 ```

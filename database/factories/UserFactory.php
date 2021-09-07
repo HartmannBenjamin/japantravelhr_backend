@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -30,9 +31,8 @@ class UserFactory extends Factory
             'name' => $this->faker->name(),
             'email' => $this->faker->email(),
             'image_name' => 'test.png',
-            'role_id' => 1,
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-            // @password = password
+            'role_id' => UserService::ROLE_USER,
+            'password' => bcrypt(1234),
         ];
     }
 }

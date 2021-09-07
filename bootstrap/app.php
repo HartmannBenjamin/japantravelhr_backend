@@ -52,8 +52,10 @@ $app->singleton(
 |
 */
 if (! defined('PHPUNIT_COMPOSER_INSTALL') && ! defined('__PHPUNIT_PHAR__')) {
-    header('Access-Control-Allow-Headers: Authorization');
-    header('Access-Control-Expose-Headers: Authorization');
+    header('Access-Control-Allow-Headers: *');
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: *');
+    header('Access-Control-Expose-Headers: *');
 }
 
 return $app;

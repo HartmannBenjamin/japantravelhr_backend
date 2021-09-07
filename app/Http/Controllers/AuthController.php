@@ -102,6 +102,7 @@ class AuthController extends BaseController
      * Get new token for user
      *
      * @return JsonResponse
+     * @throws JWTException
      */
     public function refreshToken(): JsonResponse
     {

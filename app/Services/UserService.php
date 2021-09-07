@@ -86,7 +86,7 @@ class UserService
     }
 
     /**
-     * Validation of change password Data
+     * Validation of change password data
      *
      * @param array $input
      *

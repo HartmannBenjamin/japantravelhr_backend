@@ -19,11 +19,11 @@ class RequestTest extends TestCase
 {
     use WithFaker;
 
+    private $user;
     private $token_user;
     private $token_hr;
     private $token_manager;
     private $request;
-    private $user;
     private $dataRequest = [
         'subject' => 'This is a test',
         'description' => 'Here\'s the description'
@@ -50,9 +50,9 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function request_all()
+    public function testToGetAllRequest()
     {
-        $this->get('api/request/all', ['authorization' => "bearer $this->token_user"])->assertStatus(200);
+        $this->get('request/all', ['authorization' => "bearer $this->token_user"])->assertStatus(200);
     }
 
     /**
@@ -62,12 +62,11 @@ class RequestTest extends TestCase
     {
         $request = json_decode(
             $this->post(
-                'api/request/create',
+                'request/create',
                 $this->dataRequest,
                 ['authorization' => "bearer $this->token_user"]
             )->assertStatus(201)->getContent(), true
         )['data'];
-
 
         $this->assertEquals(
             [$this->dataRequest['subject'], $this->dataRequest['description']],
@@ -82,7 +81,7 @@ class RequestTest extends TestCase
      */
     public function tryToCreateRequestWithoutData()
     {
-        $this->post('api/request/create', [], ['authorization' => "bearer $this->token_user"])
+        $this->post('request/create', [], ['authorization' => "bearer $this->token_user"])
             ->assertStatus(404);
     }
 
@@ -92,7 +91,7 @@ class RequestTest extends TestCase
     public function tryToCreateRequestAsHrStaff()
     {
         $this->post(
-            'api/request/create',
+            'request/create',
             $this->dataRequest,
             ['authorization' => "bearer $this->token_hr"]
         )->assertStatus(403);
@@ -104,7 +103,7 @@ class RequestTest extends TestCase
     public function tryToCreateRequestAsManager()
     {
         $this->post(
-            'api/request/create',
+            'request/create',
             $this->dataRequest,
             ['authorization' => "bearer $this->token_manager"]
         )->assertStatus(403);
@@ -113,9 +112,20 @@ class RequestTest extends TestCase
     /**
      * @test
      */
+    public function getUserRequestById()
+    {
+        $userToken = JWTAuth::fromUser($this->request->user);
+
+        $this->get('request/get/' . $this->request->id, ['authorization' => "bearer $userToken"])
+            ->assertStatus(200);
+    }
+
+    /**
+     * @test
+     */
     public function getRequestByIdAsOtherUser()
     {
-        $this->get('api/request/get/' . $this->request->id, ['authorization' => "bearer $this->token_user"])
+        $this->get('request/get/' . $this->request->id, ['authorization' => "bearer $this->token_user"])
             ->assertStatus(403);
     }
 
@@ -124,7 +134,7 @@ class RequestTest extends TestCase
      */
     public function getRequestByIdAsHrStaff()
     {
-        $this->get('api/request/get/' . $this->request->id, ['authorization' => "bearer $this->token_hr"])
+        $this->get('request/get/' . $this->request->id, ['authorization' => "bearer $this->token_hr"])
             ->assertStatus(200);
     }
 
@@ -133,7 +143,7 @@ class RequestTest extends TestCase
      */
     public function getRequestByIdAsManagerStaff()
     {
-        $this->get('api/request/get/' . $this->request->id, ['authorization' => "bearer $this->token_manager"])
+        $this->get('request/get/' . $this->request->id, ['authorization' => "bearer $this->token_manager"])
             ->assertStatus(200);
     }
 
@@ -142,28 +152,23 @@ class RequestTest extends TestCase
      */
     public function createRequestAndVerifyInformation()
     {
-        $attributes = [
-            'subject' => 'This is a test',
-            'description' => 'Here\'s the description'
-        ];
-
         $requestId = json_decode(
             $this->post(
-                'api/request/create',
-                $attributes,
+                'request/create',
+                $this->dataRequest,
                 ['authorization' => "bearer $this->token_user"]
             )->assertStatus(201)->getContent(), true
         )['data']['id'];
 
         $request = json_decode(
             $this->get(
-                'api/request/get/' . $requestId,
+                'request/get/' . $requestId,
                 ['authorization' => "bearer $this->token_user"]
             )->assertStatus(200)->getContent(), true
         )['data'];
 
         $this->assertEquals(
-            [$attributes['subject'], $attributes['description']],
+            [$this->dataRequest['subject'], $this->dataRequest['description']],
             [$request['subject'], $request['description']]
         );
     }
@@ -176,7 +181,7 @@ class RequestTest extends TestCase
         // creation of request
         $requestId = json_decode(
             $this->post(
-                'api/request/create',
+                'request/create',
                 $this->dataRequest,
                 ['authorization' => "bearer $this->token_user"]
             )->assertStatus(201)->getContent(), true
@@ -190,7 +195,7 @@ class RequestTest extends TestCase
         // update data of request
         $request = json_decode(
             $this->put(
-                'api/request/edit/' . $requestId,
+                'request/edit/' . $requestId,
                 $attributesUpdated,
                 ['authorization' => "bearer $this->token_user"]
             )->assertStatus(200)->getContent(), true
@@ -217,7 +222,7 @@ class RequestTest extends TestCase
         $creatorToken = JWTAuth::fromUser(User::find($this->request->user_id));
 
         $this->put(
-            'api/request/edit/' . $this->request->id,
+            'request/edit/' . $this->request->id,
             [],
             ['authorization' => "bearer $creatorToken"]
         )->assertStatus(404);
@@ -229,7 +234,7 @@ class RequestTest extends TestCase
     public function tryToUpdateRequestAsOtherUser()
     {
         $this->put(
-            'api/request/edit/' . $this->request->id,
+            'request/edit/' . $this->request->id,
             $this->dataRequest,
             ['authorization' => "bearer $this->token_user"]
         )->assertStatus(403);
@@ -241,7 +246,7 @@ class RequestTest extends TestCase
     public function tryToUpdateARequestAsHrStaff()
     {
         $this->put(
-            'api/request/edit/' . $this->request->id,
+            'request/edit/' . $this->request->id,
             $this->dataRequest,
             ['authorization' => "bearer $this->token_hr"]
         )->assertStatus(403);
@@ -250,10 +255,10 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function tryToUpdateARequestAsManager()
+    public function tryToUpdateRequestAsManager()
     {
         $this->put(
-            'api/request/edit/' . $this->request->id,
+            'request/edit/' . $this->request->id,
             $this->dataRequest,
             ['authorization' => "bearer $this->token_manager"]
         )->assertStatus(403);
@@ -270,7 +275,7 @@ class RequestTest extends TestCase
         ]);
 
         $this->put(
-            'api/request/edit/' . $request->id,
+            'request/edit/' . $request->id,
             $this->dataRequest,
             ['authorization' => "bearer $this->token_user"]
         )->assertStatus(403);
@@ -287,7 +292,7 @@ class RequestTest extends TestCase
         ]);
 
         $this->put(
-            'api/request/edit/' . $request->id,
+            'request/edit/' . $request->id,
             $this->dataRequest,
             ['authorization' => "bearer $this->token_user"]
         )->assertStatus(403);
@@ -301,7 +306,7 @@ class RequestTest extends TestCase
         foreach (RequestService::ALL_STATUS as $statusId) {
             $requestStatusId = json_decode(
                 $this->put(
-                    'api/request/changeStatus/' . $this->request->id,
+                    'request/changeStatus/' . $this->request->id,
                     ['status_id' => $statusId],
                     ['authorization' => "bearer $this->token_hr"]
                 )->assertStatus(200)->getContent(), true
@@ -317,7 +322,7 @@ class RequestTest extends TestCase
     public function changeRequestStatusPassingNonExistentStatusId()
     {
         $this->put(
-            'api/request/changeStatus/' . $this->request->id,
+            'request/changeStatus/' . $this->request->id,
             ['status_id' => 6],
             ['authorization' => "bearer $this->token_hr"]
         )->assertStatus(404);
@@ -329,7 +334,7 @@ class RequestTest extends TestCase
     public function changeRequestStatusAsUser()
     {
         $this->put(
-            'api/request/changeStatus/' . $this->request->id,
+            'request/changeStatus/' . $this->request->id,
             ['status_id' => RequestService::STATUS_PROCESSED],
             ['authorization' => "bearer $this->token_user"]
         )->assertStatus(403);
@@ -341,7 +346,7 @@ class RequestTest extends TestCase
     public function changeRequestStatusAsManager()
     {
         $this->put(
-            'api/request/changeStatus/' . $this->request->id,
+            'request/changeStatus/' . $this->request->id,
             ['status_id' => RequestService::STATUS_PROCESSED],
             ['authorization' => "bearer $this->token_manager"]
         )->assertStatus(403);
@@ -358,14 +363,13 @@ class RequestTest extends TestCase
 
         $requestStatusId = json_decode(
             $this->put(
-                'api/request/complete/' . $this->request->id,
+                'request/complete/' . $this->request->id,
                 [],
                 ['authorization' => "bearer $this->token_manager"]
             )->assertStatus(200)->getContent(), true
         )['data']['status']['id'];
 
         $this->assertEquals(RequestService::STATUS_PROCESSED, $requestStatusId);
-        $this->assertNotEquals(RequestService::STATUS_HR_REVIEWED, $requestStatusId);
     }
 
     /**
@@ -374,7 +378,7 @@ class RequestTest extends TestCase
     public function completeRequestAsUser()
     {
         $this->put(
-            'api/request/complete/' . $this->request->id,
+            'request/complete/' . $this->request->id,
             [],
             ['authorization' => "bearer $this->token_user"]
         )->assertStatus(403);
@@ -386,7 +390,7 @@ class RequestTest extends TestCase
     public function completeRequestAsHrStaff()
     {
         $this->put(
-            'api/request/complete/' . $this->request->id,
+            'request/complete/' . $this->request->id,
             [],
             ['authorization' => "bearer $this->token_hr"]
         )->assertStatus(403);
@@ -397,7 +401,7 @@ class RequestTest extends TestCase
      */
     public function getAllRequestStatus()
     {
-        $this->get('api/request/status', ['authorization' => "bearer $this->token_user"])->assertStatus(200);
+        $this->get('request/status', ['authorization' => "bearer $this->token_user"])->assertStatus(200);
     }
 
     /**
@@ -405,7 +409,7 @@ class RequestTest extends TestCase
      */
     public function getRequestsPdfFileAsUser()
     {
-        $this->get('api/request/pdf', ['authorization' => "bearer $this->token_user"])->assertStatus(403);
+        $this->get('request/pdf', ['authorization' => "bearer $this->token_user"])->assertStatus(403);
     }
 
     /**
@@ -413,7 +417,7 @@ class RequestTest extends TestCase
      */
     public function getRequestsPdfFileAsHrStaff()
     {
-        $this->get('api/request/pdf', ['authorization' => "bearer $this->token_hr"])->assertStatus(200);
+        $this->get('request/pdf', ['authorization' => "bearer $this->token_hr"])->assertStatus(200);
     }
 
     /**
@@ -421,6 +425,6 @@ class RequestTest extends TestCase
      */
     public function getRequestsPdfFileAsManager()
     {
-        $this->get('api/request/pdf', ['authorization' => "bearer $this->token_manager"])->assertStatus(200);
+        $this->get('request/pdf', ['authorization' => "bearer $this->token_manager"])->assertStatus(200);
     }
 }

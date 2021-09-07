@@ -36,14 +36,10 @@ class DatabaseTest extends TestCase
     public function testDatabaseServiceFunctions()
     {
         $this->databaseService->createDatabase('test');
-
-        $databaseExists = $this->databaseService->databaseExists('test');
-        $this->assertTrue($databaseExists);
+        $this->assertTrue($this->databaseService->databaseExists('test'));
 
         $this->databaseService->dropDatabase('test');
-
-        $databaseExists = $this->databaseService->databaseExists('test');
-        $this->assertFalse($databaseExists);
+        $this->assertFalse($this->databaseService->databaseExists('test'));
     }
 
     /**
@@ -53,9 +49,8 @@ class DatabaseTest extends TestCase
     {
         Artisan::call('db:drop');
 
-        $database       = env('DB_DATABASE', false);
-        $databaseExists = $this->databaseService->databaseExists($database);
-        $this->assertFalse($databaseExists);
+        $database = env('DB_DATABASE', false);
+        $this->assertFalse($this->databaseService->databaseExists($database));
     }
 
     /**
@@ -65,8 +60,7 @@ class DatabaseTest extends TestCase
     {
         Artisan::call('db:create');
 
-        $database       = env('DB_DATABASE', false);
-        $databaseExists = $this->databaseService->databaseExists($database);
-        $this->assertTrue($databaseExists);
+        $database = env('DB_DATABASE', false);
+        $this->assertTrue($this->databaseService->databaseExists($database));
     }
 }

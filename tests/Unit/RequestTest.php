@@ -78,7 +78,7 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function testRequestLogRelation()
+    public function testRequestLogRelations()
     {
         $user = new User();
         $user->name = 'nameTest';
@@ -172,7 +172,7 @@ class RequestTest extends TestCase
         foreach ($requests as $request) {
             $resource = $request->toArray(null);
 
-            $this->assertEquals($this->requestService::STATUS_HR_REVIEWED, $resource['status']['id']);
+            $this->assertEquals(RequestService::STATUS_HR_REVIEWED, $resource['status']['id']);
         }
     }
 
@@ -191,9 +191,10 @@ class RequestTest extends TestCase
         $this->assertEquals($subject, $request['subject']);
         $this->assertEquals($description, $request['description']);
         $this->assertEquals(self::ID_TEST_USER, $request['created_by']['id']);
-        $this->assertEquals($this->requestService::STATUS_OPEN, $request['status']['id']);
+        $this->assertEquals(RequestService::STATUS_OPEN, $request['status']['id']);
         $this->assertNotEmpty($request['logs']);
         $this->assertEquals(self::ID_TEST_USER, $request['logs'][0]['user_id']);
+        $this->assertEquals(__('request.log_created'), $request['logs'][0]['message']);
     }
 
     /**
@@ -215,7 +216,7 @@ class RequestTest extends TestCase
             $this->assertEquals($request->user_id, $requestUpdated['created_by']['id']);
             $this->assertEquals($request->status_id, $requestUpdated['status']['id']);
             $this->assertNotEmpty($requestUpdated['logs']);
-            $this->assertEquals('Request updated by user', $requestUpdated['logs'][0]['message']);
+            $this->assertEquals(__('request.log_updated'), $requestUpdated['logs'][0]['message']);
             $this->assertEquals($request->user_id, $requestUpdated['logs'][0]['user_id']);
         }
     }
@@ -231,13 +232,13 @@ class RequestTest extends TestCase
             $requestUpdated = $this->requestService->updateStatus(
                 $request,
                 self::ID_TEST_HR,
-                $this->requestService::STATUS_HR_REVIEWED
+                RequestService::STATUS_HR_REVIEWED
             )->toArray(null);
 
             $this->assertEquals($request->subject, $requestUpdated['subject']);
             $this->assertEquals($request->description, $requestUpdated['description']);
             $this->assertEquals($request->user_id, $requestUpdated['created_by']['id']);
-            $this->assertEquals($this->requestService::STATUS_HR_REVIEWED, $requestUpdated['status']['id']);
+            $this->assertEquals(RequestService::STATUS_HR_REVIEWED, $requestUpdated['status']['id']);
             $this->assertNotEmpty($requestUpdated['logs']);
             $this->assertEquals(self::ID_TEST_HR, $requestUpdated['logs'][0]['user_id']);
         }
@@ -292,7 +293,7 @@ class RequestTest extends TestCase
     /**
      * @test
      */
-    public function testValidationDataRequestTypeDataSubject()
+    public function testValidationDataRequestWithIntegerSubject()
     {
         $dataTest = $this->dataTestRequest;
         $dataTest['subject'] = $this->faker->randomNumber();

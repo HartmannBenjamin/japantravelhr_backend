@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -43,14 +44,14 @@ class UploadImageController extends BaseController
     {
         $user = $request->user();
 
-        $this->validate(
-            $request,
-            [
-                'file'  => 'required|image|mimes:jpg,png|max:2048'
-            ]
-        );
-
         try {
+            $this->validate(
+                $request,
+                [
+                    'file'  => 'required|image|mimes:jpg,png|max:2048'
+                ]
+            );
+
             $user = $this->userService->uploadUserImage($request->file('file'), $user);
         } catch (Exception $e) {
             return $this->sendError(__('other.error'), [$e->getMessage()]);

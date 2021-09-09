@@ -42,7 +42,7 @@ php artisan serve
 
 ---
 
-## ➤ Default users informaiton
+## ➤ Default users information
 ```
 User :
     - email: user@japantravel.com
